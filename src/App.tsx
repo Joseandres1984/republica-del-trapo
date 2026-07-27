@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import embeddedImages from "./embeddedAssets";
 
 const phone = "5491157943584";
 
@@ -26,7 +27,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x48",
     price: "$420",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/papel-higienico-30m-x48.webp",
+    image: embeddedImages["/products/papel-higienico-30m-x48.webp"],
   },
   {
     name: "Papel Higiénico 80 m",
@@ -37,7 +38,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x30",
     price: "$830",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/papel-higienico-80m-x30.webp",
+    image: embeddedImages["/products/papel-higienico-80m-x30.webp"],
   },
   {
     name: "Papel Higiénico Extra Blanco",
@@ -48,7 +49,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x30",
     price: "$1.110",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/newpel-extra-blanco-x30.webp",
+    image: embeddedImages["/products/newpel-extra-blanco-x30.webp"],
   },
   {
     name: "Papel Higiénico Jumbo Eco",
@@ -59,7 +60,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x8",
     price: "$2.020",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/jumbo-eco-x8.webp",
+    image: embeddedImages["/products/jumbo-eco-x8.webp"],
   },
   {
     name: "Papel Higiénico Jumbo Extra Blanco",
@@ -70,7 +71,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x8",
     price: "$3.680",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/jumbo-extra-blanco-x8.webp",
+    image: embeddedImages["/products/jumbo-extra-blanco-x8.webp"],
   },
   {
     name: "Papel Higiénico Premium 300 m",
@@ -81,7 +82,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x8",
     price: "$5.660",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/jumbo-premium-300m-x8.webp",
+    image: embeddedImages["/products/jumbo-premium-300m-x8.webp"],
   },
   {
     name: "Max Plus 80 m",
@@ -92,7 +93,7 @@ const products: Product[] = [
     sourcePack: "Caja original: 10 paquetes",
     price: "$6.620",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/higienol-max-plus-80m-x4.webp",
+    image: embeddedImages["/products/higienol-max-plus-80m-x4.webp"],
   },
   {
     name: "Doble Hoja 20 m",
@@ -103,7 +104,7 @@ const products: Product[] = [
     sourcePack: "Caja original: 10 paquetes",
     price: "$3.030",
     category: "higienicos",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/elegant-doble-hoja-20m-x4.webp",
+    image: embeddedImages["/products/elegant-doble-hoja-20m-x4.webp"],
   },
   {
     name: "Toalla de Papel 200 m",
@@ -114,7 +115,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x4",
     price: "$4.690",
     category: "bobinas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toalla-papel-200m-x4.webp",
+    image: embeddedImages["/products/toalla-papel-200m-x4.webp"],
   },
   {
     name: "Toalla de Papel Blanca 200 m",
@@ -125,7 +126,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x4",
     price: "$8.720",
     category: "bobinas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toalla-papel-blanca-200m-x4.webp",
+    image: embeddedImages["/products/toalla-papel-blanca-200m-x4.webp"],
   },
   {
     name: "Bobina de Papel 24 cm",
@@ -136,7 +137,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x2",
     price: "$14.440",
     category: "bobinas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/bobina-papel-24cm-400m-x2.webp",
+    image: embeddedImages["/products/bobina-papel-24cm-400m-x2.webp"],
   },
   {
     name: "Bobina Blanca Doble Hoja",
@@ -147,7 +148,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x2",
     price: "$20.310",
     category: "bobinas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/bobina-blanca-doble-hoja-400m-x2.webp",
+    image: embeddedImages["/products/bobina-blanca-doble-hoja-400m-x2.webp"],
   },
   {
     name: "Toallas Intercaladas Beige",
@@ -158,7 +159,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x10",
     price: "$1.550",
     category: "intercaladas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toallas-intercaladas-beige-x10.webp",
+    image: embeddedImages["/products/toallas-intercaladas-beige-x10.webp"],
   },
   {
     name: "Toallas Intercaladas Blancas NP",
@@ -169,7 +170,7 @@ const products: Product[] = [
     sourcePack: "Presentación original x10",
     price: "$2.070",
     category: "intercaladas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toallas-intercaladas-blancas-np-x10.webp",
+    image: embeddedImages["/products/toallas-intercaladas-blancas-np-x10.webp"],
   },
   {
     name: "Toallas Intercaladas Premium",
@@ -180,7 +181,7 @@ const products: Product[] = [
     sourcePack: "Caja cerrada",
     price: "$33.040",
     category: "intercaladas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toallas-intercaladas-premium-2000.webp",
+    image: embeddedImages["/products/toallas-intercaladas-premium-2000.webp"],
   },
   {
     name: "Toallas Intercaladas Blancas",
@@ -191,7 +192,7 @@ const products: Product[] = [
     sourcePack: "Caja cerrada",
     price: "$40.060",
     category: "intercaladas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/toallas-intercaladas-blancas-2500.webp",
+    image: embeddedImages["/products/toallas-intercaladas-blancas-2500.webp"],
   },
   {
     name: "Servilletas 30 × 30",
@@ -202,7 +203,7 @@ const products: Product[] = [
     sourcePack: "Caja cerrada",
     price: "$18.320",
     category: "intercaladas",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/servilletas-30x30-caja.webp",
+    image: embeddedImages["/products/servilletas-30x30-caja.webp"],
   },
   {
     name: "Rollo Cocina 120 Paños",
@@ -213,7 +214,7 @@ const products: Product[] = [
     sourcePack: "Presentación original: 4 paquetes",
     price: "$5.970",
     category: "cocina",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/newpel-cocina-120-panos-x3.webp",
+    image: embeddedImages["/products/newpel-cocina-120-panos-x3.webp"],
   },
   {
     name: "Rollo Cocina Gigante 150 Paños",
@@ -223,7 +224,7 @@ const products: Product[] = [
     saleUnit: "1 rollo",
     sourcePack: "Presentación original x8",
     category: "cocina",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/newpel-cocina-150-panos.webp",
+    image: embeddedImages["/products/newpel-cocina-150-panos.webp"],
   },
   {
     name: "Rollo Cocina Gigante 200 Paños",
@@ -233,7 +234,7 @@ const products: Product[] = [
     saleUnit: "1 rollo",
     sourcePack: "Presentación original x12",
     category: "cocina",
-    image: "https://republica-del-trapo.joseandres1984.chatgpt.site/products/newpel-cocina-200-panos.webp",
+    image: embeddedImages["/products/newpel-cocina-200-panos.webp"],
   },
 ];
 
@@ -592,7 +593,7 @@ export default function Home() {
         <a className="brand" href="#inicio" aria-label="República del Trapo, inicio">
           <img
             className="brand-logo"
-            src="https://republica-del-trapo.joseandres1984.chatgpt.site/brand/republica-del-trapo-logo-trimmed.png"
+            src={embeddedImages["/brand/republica-del-trapo-logo-trimmed.png"]}
             alt="República del Trapo · Limpieza Nacional"
             width={1522}
             height={531}
@@ -639,7 +640,7 @@ export default function Home() {
             <figure className="hero-product hero-product-higienol">
               <figcaption>HIGIÉNICOS</figcaption>
               <img
-                src="https://republica-del-trapo.joseandres1984.chatgpt.site/products/higienol-max-plus-80m-x4.webp"
+                src={embeddedImages["/products/higienol-max-plus-80m-x4.webp"]}
                 alt="Higienol Max Plus de 80 metros, paquete de cuatro rollos"
                 width={900}
                 height={900}
@@ -650,7 +651,7 @@ export default function Home() {
             <figure className="hero-product hero-product-newpel">
               <figcaption>COCINA</figcaption>
               <img
-                src="https://republica-del-trapo.joseandres1984.chatgpt.site/products/newpel-cocina-120-panos-x3.webp"
+                src={embeddedImages["/products/newpel-cocina-120-panos-x3.webp"]}
                 alt="Newpel rollo de cocina de 120 paños, paquete de tres rollos"
                 width={900}
                 height={900}
@@ -661,7 +662,7 @@ export default function Home() {
             <figure className="hero-product hero-product-jumbo">
               <figcaption>INSTITUCIONAL</figcaption>
               <img
-                src="https://republica-del-trapo.joseandres1984.chatgpt.site/products/jumbo-premium-300m-x8.webp"
+                src={embeddedImages["/products/jumbo-premium-300m-x8.webp"]}
                 alt="Papel higiénico jumbo premium de 300 metros"
                 width={900}
                 height={900}
@@ -681,7 +682,7 @@ export default function Home() {
       <section className="patria-mural" aria-labelledby="mural-title">
         <img
           className="patria-mural-art"
-          src="https://republica-del-trapo.joseandres1984.chatgpt.site/brand/mural-patria-barrio.webp"
+          src={embeddedImages["/brand/mural-patria-barrio.webp"]}
           alt="Mural argentino con el Obelisco, las Islas Malvinas, el Sol de Mayo y un homenaje futbolero al número diez"
           width={1536}
           height={1024}
@@ -860,7 +861,7 @@ export default function Home() {
         <a className="brand" href="#inicio">
           <img
             className="brand-logo footer-logo"
-            src="https://republica-del-trapo.joseandres1984.chatgpt.site/brand/republica-del-trapo-logo-trimmed.png"
+            src={embeddedImages["/brand/republica-del-trapo-logo-trimmed.png"]}
             alt="República del Trapo · Limpieza Nacional"
             width={1522}
             height={531}
