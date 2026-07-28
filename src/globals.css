@@ -1854,17 +1854,15 @@ footer > a:last-child { justify-self: end; font-size: 14px; font-weight: 900; }
   background: var(--cream);
   box-shadow: 3px 3px 0 var(--ink);
 }
-.bot-roll-icon svg { display: block; width: 43px; height: 43px; overflow: visible; }
+.bot-roll-icon > span {
+  display: block;
+  font-size: 31px;
+  line-height: 1;
+  filter: drop-shadow(1px 1px 0 rgba(8,42,82,.28));
+  transform: rotate(-8deg);
+}
 .bot-roll-icon.large { width: 60px; height: 60px; }
-.bot-roll-icon.large svg { width: 55px; height: 55px; }
-.bot-paper-sheet, .bot-paper-roll { fill: white; stroke: var(--ink); stroke-linejoin: round; stroke-width: 3.5; }
-.bot-paper-sheet { fill: var(--sky-soft); }
-.bot-paper-roll { fill: white; }
-.bot-paper-core { fill: var(--sun); stroke: var(--ink); stroke-width: 3; }
-.bot-paper-hole { fill: var(--cream); }
-.bot-paper-stripe { fill: none; stroke: var(--sky); stroke-linecap: round; stroke-width: 4; }
-.bot-paper-eye { fill: var(--ink); }
-.bot-paper-smile { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-width: 2.5; }
+.bot-roll-icon.large > span { font-size: 40px; }
 
 .help-bot-panel {
   position: fixed;
@@ -2758,7 +2756,7 @@ footer > a:last-child { justify-self: end; font-size: 14px; font-weight: 900; }
   .help-bot-header { padding: 10px; }
   .help-bot-header h2 { font-size: 18px; }
   .bot-roll-icon.large { width: 48px; height: 48px; }
-  .bot-roll-icon.large svg { width: 44px; height: 44px; }
+  .bot-roll-icon.large > span { font-size: 32px; }
   .help-bot-foot { padding: 9px 10px; }
   .product-modal {
     width: calc(100vw - 18px);
