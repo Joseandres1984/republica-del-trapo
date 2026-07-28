@@ -329,6 +329,51 @@ const productUseCases: Record<string, string> = {
 // del proveedor, una reserva operativa del 8% y un aporte mínimo del 18%.
 // Los costos mayoristas no se publican en este repositorio abierto.
 const validatedMaximumDiscountRate = 0.05;
+const partyColors = ["#79cbed", "#f4cb3c", "#ffffff", "#0e4d92", "#a8dab7"];
+
+const builderProductNames = [
+  "Papel Higiénico 80 m",
+  "Papel Higiénico Extra Blanco",
+  "Papel Higiénico Jumbo Eco",
+  "Doble Hoja 20 m",
+  "Toallas Intercaladas Beige",
+  "Toallas Intercaladas Blancas NP",
+  "Toalla de Papel 200 m",
+  "Rollo Cocina 120 Paños",
+] as const;
+
+const builderPresets = [
+  {
+    id: "casa",
+    label: "Para casa",
+    caption: "Baño y cocina",
+    quantities: {
+      "Papel Higiénico 80 m": 5,
+      "Rollo Cocina 120 Paños": 2,
+      "Doble Hoja 20 m": 1,
+    },
+  },
+  {
+    id: "comercio",
+    label: "Para comercio",
+    caption: "Alto movimiento",
+    quantities: {
+      "Papel Higiénico Jumbo Eco": 5,
+      "Toallas Intercaladas Beige": 5,
+      "Toalla de Papel 200 m": 2,
+    },
+  },
+  {
+    id: "oficina",
+    label: "Para oficina",
+    caption: "Prolijo y rendidor",
+    quantities: {
+      "Papel Higiénico Extra Blanco": 5,
+      "Toallas Intercaladas Blancas NP": 5,
+      "Rollo Cocina 120 Paños": 1,
+    },
+  },
+] as const;
 
 const shippingZones = [
   {
@@ -403,6 +448,38 @@ function volumeDiscountRate(_product: Product, quantity: number) {
 
 function comboSafeDiscountRate(combo: (typeof combos)[number]) {
   return Math.min(combo.discountRate, validatedMaximumDiscountRate);
+}
+
+function discountOpportunity(items: Array<{ product: Product; quantity: number }>) {
+  const candidates = items
+    .filter((item) => item.quantity > 0 && item.quantity < 10)
+    .map((item) => {
+      const target = item.quantity < 5 ? 5 : 10;
+      return {
+        ...item,
+        target,
+        remaining: target - item.quantity,
+        nextRate: target === 5 ? 3 : 5,
+        progress: Math.round((item.quantity / target) * 100),
+      };
+    })
+    .sort(
+      (first, second) =>
+        first.remaining - second.remaining ||
+        priceNumber(second.product.price) - priceNumber(first.product.price),
+    );
+
+  if (candidates.length) return candidates[0];
+
+  const maximumLine = items.find((item) => item.quantity >= 10);
+  if (!maximumLine) return null;
+  return {
+    ...maximumLine,
+    target: 10,
+    remaining: 0,
+    nextRate: 5,
+    progress: 100,
+  };
 }
 
 function ProductVisual({ product, priority = false }: { product: Product; priority?: boolean }) {
@@ -486,6 +563,11 @@ function ProductCard({
 export default function Home() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [activeCombos, setActiveCombos] = useState<Record<string, number>>({});
+  const [builderQuantities, setBuilderQuantities] = useState<Record<string, number>>({
+    ...builderPresets[0].quantities,
+  });
+  const [selectedBuilderPreset, setSelectedBuilderPreset] = useState<string | null>("casa");
+  const [celebrationId, setCelebrationId] = useState(0);
   const [cartReady, setCartReady] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailQuantity, setDetailQuantity] = useState(1);
@@ -526,6 +608,12 @@ export default function Home() {
     if (!cartReady || Object.keys(cart).length || !Object.keys(activeCombos).length) return;
     setActiveCombos({});
   }, [cart, activeCombos, cartReady]);
+
+  useEffect(() => {
+    if (!celebrationId) return;
+    const timer = window.setTimeout(() => setCelebrationId(0), 1250);
+    return () => window.clearTimeout(timer);
+  }, [celebrationId]);
 
   useEffect(() => {
     const panelIsOpen = Boolean(selectedProduct || cartOpen || checkoutOpen || orderConfirmation);
@@ -612,6 +700,37 @@ export default function Home() {
     ? Math.round(detailBaseTotal * volumeDiscountRate(selectedProduct, detailQuantity))
     : 0;
   const detailTotal = detailBaseTotal - detailSavings;
+  const cartOpportunity = discountOpportunity(cartItems);
+  const builderItems = useMemo(
+    () =>
+      builderProductNames
+        .map((name) => products.find((product) => product.name === name))
+        .filter((product): product is Product => Boolean(product?.price))
+        .map((product) => ({ product, quantity: builderQuantities[product.name] ?? 0 }))
+        .filter((item) => item.quantity > 0),
+    [builderQuantities],
+  );
+  const builderCount = builderItems.reduce((total, item) => total + item.quantity, 0);
+  const builderSubtotal = builderItems.reduce(
+    (total, item) => total + priceNumber(item.product.price) * item.quantity,
+    0,
+  );
+  const builderSavings = Math.round(
+    builderItems.reduce(
+      (total, item) =>
+        total +
+        priceNumber(item.product.price) *
+          item.quantity *
+          volumeDiscountRate(item.product, item.quantity),
+      0,
+    ),
+  );
+  const builderTotal = builderSubtotal - builderSavings;
+  const builderOpportunity = discountOpportunity(builderItems);
+
+  function celebrate() {
+    setCelebrationId(Date.now());
+  }
 
   function addToCart(product: Product, quantity = 1) {
     if (!product.price) {
@@ -625,6 +744,7 @@ export default function Home() {
     setSelectedProduct(null);
     setDetailQuantity(1);
     setCartOpen(true);
+    celebrate();
   }
 
   function changeQuantity(productName: string, change: number) {
@@ -660,6 +780,36 @@ export default function Home() {
       [combo.id]: (current[combo.id] ?? 0) + 1,
     }));
     setCartOpen(true);
+    celebrate();
+  }
+
+  function applyBuilderPreset(preset: (typeof builderPresets)[number]) {
+    setBuilderQuantities({ ...preset.quantities });
+    setSelectedBuilderPreset(preset.id);
+  }
+
+  function changeBuilderQuantity(productName: string, change: number) {
+    setSelectedBuilderPreset(null);
+    setBuilderQuantities((current) => {
+      const nextQuantity = Math.max(0, (current[productName] ?? 0) + change);
+      const next = { ...current };
+      if (nextQuantity === 0) delete next[productName];
+      else next[productName] = nextQuantity;
+      return next;
+    });
+  }
+
+  function addBuilderToCart() {
+    if (!builderItems.length) return;
+    setCart((current) => {
+      const next = { ...current };
+      builderItems.forEach(({ product, quantity }) => {
+        next[product.name] = (next[product.name] ?? 0) + quantity;
+      });
+      return next;
+    });
+    setCartOpen(true);
+    celebrate();
   }
 
   function sendOrder(event: FormEvent<HTMLFormElement>) {
@@ -750,6 +900,7 @@ export default function Home() {
           <a href="#bobinas">Bobinas</a>
           <a href="#intercaladas">Intercaladas</a>
           <a href="#cocina">Cocina</a>
+          <a href="#arma-tu-pedido">Armá la tuya</a>
         </nav>
         <button className="nav-cta" type="button" onClick={() => setCartOpen(true)}>
           <span className="nav-cta-label">Mi carrito</span>
@@ -768,9 +919,9 @@ export default function Home() {
           </p>
           <div className="buttons">
             <a className="button primary" href="#catalogo">Ver catálogo <span>↓</span></a>
-            <button className="button secondary" type="button" onClick={() => setCartOpen(true)}>
-              Ver mi carrito <span>→</span>
-            </button>
+            <a className="button secondary" href="#arma-tu-pedido">
+              Armar mi pedido <span>→</span>
+            </a>
           </div>
           <div className="benefits">
             <p><i>1</i><span><b>Precio unitario</b><small>Sabés cuánto pagás</small></span></p>
@@ -963,6 +1114,135 @@ export default function Home() {
         </p>
       </section>
 
+      <section className="builder shell" id="arma-tu-pedido">
+        <header className="builder-heading">
+          <div>
+            <p className="eyebrow">Ahora jugás de técnico</p>
+            <h2>Armá la<br /><span>tuya.</span></h2>
+          </div>
+          <div className="builder-heading-copy">
+            <p>
+              Elegí una formación para arrancar o armala producto por producto.
+              El ahorro aparece solo cuando llegás a cada cantidad.
+            </p>
+            <div className="builder-presets" aria-label="Formaciones sugeridas">
+              {builderPresets.map((preset) => (
+                <button
+                  className={selectedBuilderPreset === preset.id ? "selected" : ""}
+                  type="button"
+                  key={preset.id}
+                  onClick={() => applyBuilderPreset(preset)}
+                >
+                  <b>{preset.label}</b>
+                  <small>{preset.caption}</small>
+                </button>
+              ))}
+              <button
+                className={selectedBuilderPreset === "libre" ? "selected" : ""}
+                type="button"
+                onClick={() => {
+                  setBuilderQuantities({});
+                  setSelectedBuilderPreset("libre");
+                }}
+              >
+                <b>Desde cero</b>
+                <small>A tu manera</small>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div className="builder-layout">
+          <div className="builder-products">
+            {builderProductNames.map((productName) => {
+              const product = products.find((candidate) => candidate.name === productName);
+              if (!product?.price) return null;
+              const quantity = builderQuantities[product.name] ?? 0;
+              return (
+                <article className={quantity ? "builder-product selected" : "builder-product"} key={product.name}>
+                  <img
+                    src={product.image}
+                    alt=""
+                    width={180}
+                    height={180}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="builder-product-copy">
+                    <small>{product.brand}</small>
+                    <h3>{product.name}</h3>
+                    <p>{product.saleUnit} · {product.price}</p>
+                  </div>
+                  <div className="builder-quantity" aria-label={`Cantidad de ${product.name}`}>
+                    <button
+                      type="button"
+                      onClick={() => changeBuilderQuantity(product.name, -1)}
+                      aria-label={`Restar ${product.name}`}
+                    >
+                      −
+                    </button>
+                    <span>{quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => changeBuilderQuantity(product.name, 1)}
+                      aria-label={`Sumar ${product.name}`}
+                    >
+                      ＋
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <aside className="builder-summary" aria-live="polite">
+            <p className="builder-sticker">FORMACIÓN TITULAR</p>
+            <div className="builder-ball">10</div>
+            <h3>Tu pedido</h3>
+            <p className="builder-count">{builderCount} {builderCount === 1 ? "unidad elegida" : "unidades elegidas"}</p>
+
+            {builderItems.length ? (
+              <div className="builder-lines">
+                {builderItems.map(({ product, quantity }) => (
+                  <p key={product.name}>
+                    <span>{quantity}× {product.name}</span>
+                    <b>{money(priceNumber(product.price) * quantity)}</b>
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="builder-empty">Elegí al menos un producto para empezar.</p>
+            )}
+
+            {builderOpportunity && (
+              <div className={builderOpportunity.remaining ? "discount-meter" : "discount-meter complete"}>
+                <div>
+                  <span>
+                    {builderOpportunity.remaining
+                      ? `Te faltan ${builderOpportunity.remaining} de ${builderOpportunity.product.name}`
+                      : `¡Ya tenés el 5% en ${builderOpportunity.product.name}!`}
+                  </span>
+                  <b>{builderOpportunity.remaining ? `Desbloqueás ${builderOpportunity.nextRate}%` : "PROMO MÁXIMA"}</b>
+                </div>
+                <div className="discount-track">
+                  <i style={{ width: `${builderOpportunity.progress}%` }} />
+                </div>
+              </div>
+            )}
+
+            <div className="builder-totals">
+              <p><span>Subtotal</span><b>{money(builderSubtotal)}</b></p>
+              {builderSavings > 0 && <p className="builder-saving"><span>Ahorrás</span><b>− {money(builderSavings)}</b></p>}
+              <p className="builder-grand-total"><span>Total</span><strong>{money(builderTotal)}</strong></p>
+            </div>
+            <button className="builder-add" type="button" disabled={!builderItems.length} onClick={addBuilderToCart}>
+              Sumar mi formación <span>＋</span>
+            </button>
+            <small className="builder-rule">3% desde 5 · 5% desde 10 del mismo producto</small>
+          </aside>
+        </div>
+      </section>
+
       <section className="how shell">
         <div className="how-title">
           <p className="eyebrow">Cero burocracia</p>
@@ -1032,6 +1312,23 @@ export default function Home() {
       <a className="floating-wa" href={wa("¡Hola! Quiero hacer un pedido en República del Trapo.")} target="_blank" rel="noreferrer" aria-label="Hacer pedido por WhatsApp">
         <i>WA</i><b>¿Necesitás ayuda?</b>
       </a>
+
+      {celebrationId > 0 && (
+        <div className="paper-party" key={celebrationId} aria-hidden="true">
+          {Array.from({ length: 28 }, (_, index) => (
+            <i
+              className={`paper-piece shape-${index % 3}`}
+              key={index}
+              style={{
+                left: `${(index * 37 + 5) % 100}%`,
+                backgroundColor: partyColors[index % partyColors.length],
+                animationDelay: `${(index % 7) * 0.045}s`,
+                animationDuration: `${0.8 + (index % 5) * 0.08}s`,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {selectedProduct && (
         <div className="panel-layer" role="presentation">
@@ -1135,6 +1432,21 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="drawer-total">
+                  {cartOpportunity && (
+                    <div className={cartOpportunity.remaining ? "discount-meter cart-meter" : "discount-meter cart-meter complete"}>
+                      <div>
+                        <span>
+                          {cartOpportunity.remaining
+                            ? `Sumá ${cartOpportunity.remaining} más de ${cartOpportunity.product.name}`
+                            : `¡Descuento máximo en ${cartOpportunity.product.name}!`}
+                        </span>
+                        <b>{cartOpportunity.remaining ? `Llegás al ${cartOpportunity.nextRate}%` : "5% ACTIVO"}</b>
+                      </div>
+                      <div className="discount-track">
+                        <i style={{ width: `${cartOpportunity.progress}%` }} />
+                      </div>
+                    </div>
+                  )}
                   <div><span>Subtotal de lista</span><strong>{money(subtotal)}</strong></div>
                   {promotionSavings > 0 && (
                     <div className="saving-line">
