@@ -19,6 +19,16 @@ type Product = {
 };
 
 type CatalogFilter = "todos" | Product["category"];
+type BotView = "menu" | "casa" | "comercio" | "envios" | "pagos";
+
+type BotRecommendation = {
+  id: string;
+  audience: "casa" | "comercio";
+  eyebrow: string;
+  name: string;
+  description: string;
+  items: Array<{ name: string; quantity: number }>;
+};
 
 const products: Product[] = [
   {
@@ -378,6 +388,79 @@ const builderPresets = [
   },
 ] as const;
 
+const botRecommendations: BotRecommendation[] = [
+  {
+    id: "casa-chica",
+    audience: "casa",
+    eyebrow: "1 o 2 personas",
+    name: "Casa práctica",
+    description: "Baño y cocina cubiertos con formatos cerrados y fáciles de guardar.",
+    items: [
+      { name: "Max Plus 80 m", quantity: 1 },
+      { name: "Rollo Cocina 120 Paños", quantity: 1 },
+    ],
+  },
+  {
+    id: "casa-media",
+    audience: "casa",
+    eyebrow: "3 o 4 personas",
+    name: "Casa rendidora",
+    description: "Una formación equilibrada para reponer menos y tener variedad.",
+    items: [
+      { name: "Papel Higiénico 80 m", quantity: 5 },
+      { name: "Rollo Cocina 120 Paños", quantity: 2 },
+      { name: "Doble Hoja 20 m", quantity: 1 },
+    ],
+  },
+  {
+    id: "casa-grande",
+    audience: "casa",
+    eyebrow: "5 personas o más",
+    name: "Familia con aguante",
+    description: "Más cantidad y el descuento máximo en el papel rendidor.",
+    items: [
+      { name: "Papel Higiénico 80 m", quantity: 10 },
+      { name: "Rollo Cocina 120 Paños", quantity: 2 },
+    ],
+  },
+  {
+    id: "comercio-chico",
+    audience: "comercio",
+    eyebrow: "Local o consultorio",
+    name: "Movimiento tranquilo",
+    description: "Lo esencial para baño y secado sin ocupar demasiado espacio.",
+    items: [
+      { name: "Papel Higiénico Jumbo Eco", quantity: 2 },
+      { name: "Toalla de Papel 200 m", quantity: 1 },
+      { name: "Toallas Intercaladas Beige", quantity: 2 },
+    ],
+  },
+  {
+    id: "oficina",
+    audience: "comercio",
+    eyebrow: "Equipo u oficina",
+    name: "Oficina prolija",
+    description: "Papeles blancos y una reposición pensada para uso cotidiano.",
+    items: [
+      { name: "Papel Higiénico Extra Blanco", quantity: 5 },
+      { name: "Toallas Intercaladas Blancas NP", quantity: 5 },
+      { name: "Rollo Cocina 120 Paños", quantity: 1 },
+    ],
+  },
+  {
+    id: "alto-transito",
+    audience: "comercio",
+    eyebrow: "Alto tránsito",
+    name: "Comercio a full",
+    description: "Formatos institucionales para baños con movimiento todos los días.",
+    items: [
+      { name: "Papel Higiénico Jumbo Eco", quantity: 5 },
+      { name: "Toallas Intercaladas Beige", quantity: 5 },
+      { name: "Toalla de Papel 200 m", quantity: 2 },
+    ],
+  },
+];
+
 const weeklyOffers = [
   {
     id: "papel-80",
@@ -485,6 +568,24 @@ function normalizeSearch(value: string) {
 function volumeDiscountRate(_product: Product, quantity: number) {
   const requestedRate = quantity >= 10 ? 0.05 : quantity >= 5 ? 0.03 : 0;
   return Math.min(requestedRate, validatedMaximumDiscountRate);
+}
+
+function botRecommendationTotal(recommendation: BotRecommendation) {
+  const baseTotal = recommendation.items.reduce((total, item) => {
+    const product = products.find((candidate) => candidate.name === item.name);
+    return total + priceNumber(product?.price) * item.quantity;
+  }, 0);
+  const savings = recommendation.items.reduce((total, item) => {
+    const product = products.find((candidate) => candidate.name === item.name);
+    if (!product) return total;
+    return (
+      total +
+      priceNumber(product.price) *
+        item.quantity *
+        volumeDiscountRate(product, item.quantity)
+    );
+  }, 0);
+  return Math.round(baseTotal - savings);
 }
 
 function comboSafeDiscountRate(combo: (typeof combos)[number]) {
@@ -623,6 +724,8 @@ export default function Home() {
   const [detailQuantity, setDetailQuantity] = useState(1);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [botOpen, setBotOpen] = useState(false);
+  const [botView, setBotView] = useState<BotView>("menu");
   const [orderConfirmation, setOrderConfirmation] = useState<{
     orderNumber: string;
     whatsAppUrl: string;
@@ -674,6 +777,7 @@ export default function Home() {
       setSelectedProduct(null);
       setCartOpen(false);
       setCheckoutOpen(false);
+      setBotOpen(false);
       setOrderConfirmation(null);
     }
 
@@ -906,6 +1010,24 @@ export default function Home() {
       });
       return next;
     });
+    setCartOpen(true);
+    celebrate();
+  }
+
+  function showBotView(view: BotView) {
+    setBotView(view);
+  }
+
+  function addBotRecommendation(recommendation: BotRecommendation) {
+    setCart((current) => {
+      const next = { ...current };
+      recommendation.items.forEach((item) => {
+        next[item.name] = (next[item.name] ?? 0) + item.quantity;
+      });
+      return next;
+    });
+    setBotOpen(false);
+    setBotView("menu");
     setCartOpen(true);
     celebrate();
   }
@@ -1576,9 +1698,171 @@ export default function Home() {
         <a href={wa("¡Hola! Quiero hacer un pedido.")} target="_blank" rel="noreferrer">11 5794-3584</a>
       </footer>
 
-      <a className="floating-wa" href={wa("¡Hola! Quiero hacer un pedido en República del Trapo.")} target="_blank" rel="noreferrer" aria-label="Hacer pedido por WhatsApp">
-        <i>WA</i><b>¿Necesitás ayuda?</b>
-      </a>
+      <button
+        className={botOpen ? "help-bot-trigger is-open" : "help-bot-trigger"}
+        type="button"
+        aria-expanded={botOpen}
+        aria-controls="help-bot-panel"
+        onClick={() => setBotOpen((current) => !current)}
+      >
+        <span className="bot-roll-icon" aria-hidden="true"><i /><b>RDT</b></span>
+        <span>
+          <small>¿Necesitás una mano?</small>
+          <b>Preguntale al Trapo</b>
+        </span>
+        <em>{botOpen ? "×" : "↑"}</em>
+      </button>
+
+      {botOpen && (
+        <aside className="help-bot-panel" id="help-bot-panel" role="dialog" aria-label="Asistente de compras">
+          <header className="help-bot-header">
+            <span className="bot-roll-icon large" aria-hidden="true"><i /><b>RDT</b></span>
+            <div>
+              <small>ASESOR DEL BARRIO</small>
+              <h2>El Trapo te da una mano</h2>
+              <p><i /> Responde al toque</p>
+            </div>
+            <button type="button" onClick={() => setBotOpen(false)} aria-label="Cerrar asistente">×</button>
+          </header>
+
+          <div className="help-bot-body">
+            {botView !== "menu" && (
+              <button className="bot-back" type="button" onClick={() => showBotView("menu")}>
+                ← Volver a las opciones
+              </button>
+            )}
+
+            {botView === "menu" && (
+              <>
+                <div className="bot-message">
+                  <p>¡Buenas! Soy <b>El Trapo</b> 👋</p>
+                  <span>Te ayudo a elegir, armo una recomendación y la mando directo al carrito. Sin chamuyo.</span>
+                </div>
+                <p className="bot-question">¿Qué necesitás resolver?</p>
+                <div className="bot-menu">
+                  <button type="button" onClick={() => showBotView("casa")}>
+                    <i>⌂</i><span><b>Comprar para casa</b><small>Según cuántos sean</small></span><em>→</em>
+                  </button>
+                  <button type="button" onClick={() => showBotView("comercio")}>
+                    <i>▦</i><span><b>Comercio u oficina</b><small>Según el movimiento</small></span><em>→</em>
+                  </button>
+                  <button type="button" onClick={() => showBotView("envios")}>
+                    <i>➜</i><span><b>Envíos y retiro</b><small>Zonas, costos y mínimo</small></span><em>→</em>
+                  </button>
+                  <button type="button" onClick={() => showBotView("pagos")}>
+                    <i>$</i><span><b>¿Cómo puedo pagar?</b><small>Mercado Pago o efectivo</small></span><em>→</em>
+                  </button>
+                </div>
+              </>
+            )}
+
+            {(botView === "casa" || botView === "comercio") && (
+              <>
+                <div className="bot-message">
+                  <p>{botView === "casa" ? "Vamos con la casa 🏠" : "Vamos con el negocio 💪"}</p>
+                  <span>
+                    {botView === "casa"
+                      ? "Elegí cuántos son y te dejo un pedido como punto de partida. Después podés cambiar cualquier cantidad."
+                      : "Elegí el nivel de movimiento. Los productos se suman al carrito y después podés ajustarlos."}
+                  </span>
+                </div>
+                <div className="bot-recommendations">
+                  {botRecommendations
+                    .filter((recommendation) => recommendation.audience === botView)
+                    .map((recommendation) => {
+                      const recommendationTotal = botRecommendationTotal(recommendation);
+                      const minimumMissing = Math.max(
+                        0,
+                        minimumHomeDeliveryOrder - recommendationTotal,
+                      );
+                      return (
+                        <article className="bot-recommendation" key={recommendation.id}>
+                          <small>{recommendation.eyebrow}</small>
+                          <h3>{recommendation.name}</h3>
+                          <p>{recommendation.description}</p>
+                          <ul>
+                            {recommendation.items.map((item) => (
+                              <li key={item.name}><b>{item.quantity}×</b> {item.name}</li>
+                            ))}
+                          </ul>
+                          <div className="bot-recommendation-total">
+                            <span>
+                              <small>Total estimado</small>
+                              <strong>{money(recommendationTotal)}</strong>
+                            </span>
+                            <button type="button" onClick={() => addBotRecommendation(recommendation)}>
+                              Sumar al carrito ＋
+                            </button>
+                          </div>
+                          <p className={minimumMissing ? "bot-minimum-note" : "bot-minimum-note complete"}>
+                            {minimumMissing
+                              ? `Para envío CABA faltan ${money(minimumMissing)} · retiro sin mínimo`
+                              : "Ya alcanza el mínimo para envío CABA"}
+                          </p>
+                        </article>
+                      );
+                    })}
+                </div>
+              </>
+            )}
+
+            {botView === "envios" && (
+              <>
+                <div className="bot-message">
+                  <p>Te lo hacemos simple 🚚</p>
+                  <span>Para envío a domicilio dentro de CABA el pedido mínimo es de <b>{money(minimumHomeDeliveryOrder)}</b> antes de descuentos.</span>
+                </div>
+                <div className="bot-info-list">
+                  {shippingZones.map((zone) => (
+                    <article key={zone.id}>
+                      <div><b>{zone.name}</b><span>{zone.detail}</span></div>
+                      <strong>{money(zone.price)}</strong>
+                    </article>
+                  ))}
+                  <article>
+                    <div><b>Retiro a coordinar</b><span>Zona Quesada y Cabildo</span></div>
+                    <strong>Gratis</strong>
+                  </article>
+                  <article>
+                    <div><b>Todo el país</b><span>Correo o transporte a elección</span></div>
+                    <strong>A cotizar</strong>
+                  </article>
+                </div>
+              </>
+            )}
+
+            {botView === "pagos" && (
+              <>
+                <div className="bot-message">
+                  <p>Elegí como te quede cómodo 💸</p>
+                  <span>No te pedimos datos de tarjeta dentro de esta página.</span>
+                </div>
+                <div className="bot-payment-list">
+                  <article>
+                    <i>MP</i>
+                    <div><b>Mercado Pago</b><span>Primero confirmamos stock y envío. Después recibís el enlace seguro.</span></div>
+                  </article>
+                  <article>
+                    <i>$</i>
+                    <div><b>Efectivo</b><span>Pagás cuando recibís el pedido o cuando lo retirás.</span></div>
+                  </article>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="help-bot-foot">
+            <span><b>{cartCount}</b> {cartCount === 1 ? "producto" : "productos"} en tu carrito</span>
+            <a
+              href={wa("¡Hola! Estaba usando el asistente de República del Trapo y quiero hablar con una persona.")}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Hablar con una persona <b>WA</b>
+            </a>
+          </div>
+        </aside>
+      )}
 
       {celebrationId > 0 && (
         <div className="paper-party" key={celebrationId} aria-hidden="true">
