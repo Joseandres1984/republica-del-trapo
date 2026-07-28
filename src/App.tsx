@@ -271,6 +271,7 @@ const combos = [
     label: "Para tener de sobra",
     name: "Casa rendidora",
     description: "Baño y cocina cubiertos para no salir corriendo a reponer.",
+    discountRate: 0.04,
     items: [
       { name: "Papel Higiénico 80 m", quantity: 6 },
       { name: "Rollo Cocina 120 Paños", quantity: 1 },
@@ -281,6 +282,7 @@ const combos = [
     label: "Para local u oficina",
     name: "Comercio al día",
     description: "Un armado práctico para baño y secado de uso frecuente.",
+    discountRate: 0.04,
     items: [
       { name: "Papel Higiénico Jumbo Eco", quantity: 2 },
       { name: "Toalla de Papel 200 m", quantity: 1 },
@@ -292,12 +294,64 @@ const combos = [
     label: "Más comodidad",
     name: "Doble hoja",
     description: "Papel de baño y cocina en formatos cerrados y rendidores.",
+    discountRate: 0.04,
     items: [
       { name: "Doble Hoja 20 m", quantity: 2 },
       { name: "Rollo Cocina 120 Paños", quantity: 2 },
     ],
   },
 ] as const;
+
+const productUseCases: Record<string, string> = {
+  "Papel Higiénico 30 m": "Hogar · uso diario",
+  "Papel Higiénico 80 m": "Hogar · mayor duración",
+  "Papel Higiénico Extra Blanco": "Hogar y oficina",
+  "Papel Higiénico Jumbo Eco": "Comercios · alto tránsito",
+  "Papel Higiénico Jumbo Extra Blanco": "Oficinas e instituciones",
+  "Papel Higiénico Premium 300 m": "Alto consumo · dispenser jumbo",
+  "Max Plus 80 m": "Hogar · pack cerrado",
+  "Doble Hoja 20 m": "Hogar · mayor suavidad",
+  "Toalla de Papel 200 m": "Comercio y gastronomía",
+  "Toalla de Papel Blanca 200 m": "Oficinas y atención al público",
+  "Bobina de Papel 24 cm": "Cocina profesional y limpieza",
+  "Bobina Blanca Doble Hoja": "Gastronomía · alta absorción",
+  "Toallas Intercaladas Beige": "Baños de uso frecuente",
+  "Toallas Intercaladas Blancas NP": "Oficinas y consultorios",
+  "Toallas Intercaladas Premium": "Instituciones · consumo intensivo",
+  "Toallas Intercaladas Blancas": "Empresas y grandes comercios",
+  "Servilletas 30 × 30": "Gastronomía y eventos",
+  "Rollo Cocina 120 Paños": "Hogar · pack rendidor",
+  "Rollo Cocina Gigante 150 Paños": "Hogar · gran formato",
+  "Rollo Cocina Gigante 200 Paños": "Alto consumo · gran formato",
+};
+
+// Tope validado fuera del sitio contra los costos actuales, incluyendo el recargo
+// del proveedor, una reserva operativa del 8% y un aporte mínimo del 18%.
+// Los costos mayoristas no se publican en este repositorio abierto.
+const validatedMaximumDiscountRate = 0.05;
+
+const shippingZones = [
+  {
+    id: "cercania",
+    name: "Cercanía Quesada y Cabildo",
+    detail: "Belgrano, Núñez, Coghlan, Saavedra, Villa Urquiza y Colegiales",
+    price: 4900,
+  },
+  {
+    id: "norte-centro",
+    name: "CABA norte y centro",
+    detail: "Palermo, Recoleta, Chacarita, Villa Crespo, Retiro y Centro",
+    price: 6900,
+  },
+  {
+    id: "resto-caba",
+    name: "Resto de CABA",
+    detail: "Barrios de Capital no incluidos en las zonas anteriores",
+    price: 8900,
+  },
+] as const;
+
+type ShippingZoneId = (typeof shippingZones)[number]["id"];
 
 const faqs = [
   {
@@ -306,7 +360,11 @@ const faqs = [
   },
   {
     question: "¿El envío ya está incluido?",
-    answer: "No. El costo se calcula según la zona, el correo o el transporte elegido y te lo confirmamos antes de cobrar.",
+    answer: "No. Para CABA elegís una zona y ves la tarifa antes de enviar el pedido. El retiro es sin cargo y los envíos por correo o transporte se cotizan aparte.",
+  },
+  {
+    question: "¿Cómo funcionan los descuentos por cantidad?",
+    answer: "Aplicamos 3% desde 5 unidades y 5% desde 10 unidades del mismo producto. Si sumaste un combo, el carrito compara las promociones y usa automáticamente la que más te conviene; no se acumulan.",
   },
   {
     question: "¿Dónde se puede retirar?",
@@ -335,10 +393,19 @@ function priceNumber(price?: string) {
 }
 
 function money(value: number) {
-  return `$${new Intl.NumberFormat("es-AR").format(value)}`;
+  return `$${new Intl.NumberFormat("es-AR").format(Math.round(value))}`;
 }
 
-function ProductVisual({ product }: { product: Product }) {
+function volumeDiscountRate(_product: Product, quantity: number) {
+  const requestedRate = quantity >= 10 ? 0.05 : quantity >= 5 ? 0.03 : 0;
+  return Math.min(requestedRate, validatedMaximumDiscountRate);
+}
+
+function comboSafeDiscountRate(combo: (typeof combos)[number]) {
+  return Math.min(combo.discountRate, validatedMaximumDiscountRate);
+}
+
+function ProductVisual({ product, priority = false }: { product: Product; priority?: boolean }) {
   return (
     <div className="product-photo">
       <img
@@ -346,7 +413,7 @@ function ProductVisual({ product }: { product: Product }) {
         alt={`${product.brand}: ${product.name}, ${product.sourcePack}`}
         width={1024}
         height={1024}
-        loading="eager"
+        loading={priority ? "eager" : "lazy"}
         decoding="async"
       />
       <span className="brand-ribbon">{product.brand}</span>
@@ -384,6 +451,7 @@ function ProductCard({
           <span>{product.quality}</span>
         </div>
         <h3>{product.name}</h3>
+        <span className="use-case">{productUseCases[product.name]}</span>
         <p>{product.detail}</p>
         <dl>
           <div><dt>Unidad de venta</dt><dd>{product.saleUnit}</dd></div>
@@ -394,6 +462,7 @@ function ProductCard({
             <small>{product.price ? "Precio final" : "Precio"}</small>
             <strong>{product.price ?? "Consultar"}</strong>
           </div>
+          {product.price && <span className="volume-hint">3% desde 5 · 5% desde 10</span>}
         </div>
         <div className="product-actions">
           <button type="button" className="detail-button" onClick={() => onView(product)}>
@@ -416,6 +485,7 @@ function ProductCard({
 
 export default function Home() {
   const [cart, setCart] = useState<Record<string, number>>({});
+  const [activeCombos, setActiveCombos] = useState<Record<string, number>>({});
   const [cartReady, setCartReady] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailQuantity, setDetailQuantity] = useState(1);
@@ -427,13 +497,16 @@ export default function Home() {
     payment: "mercadopago" | "efectivo";
   } | null>(null);
   const [delivery, setDelivery] = useState<"domicilio" | "retiro" | "correo">("domicilio");
+  const [shippingZone, setShippingZone] = useState<ShippingZoneId>("cercania");
   const [payment, setPayment] = useState<"mercadopago" | "efectivo">("mercadopago");
 
   useEffect(() => {
     const restoreCart = window.setTimeout(() => {
       try {
         const savedCart = window.localStorage.getItem("republica-del-trapo-cart");
+        const savedCombos = window.localStorage.getItem("republica-del-trapo-combos");
         if (savedCart) setCart(JSON.parse(savedCart));
+        if (savedCombos) setActiveCombos(JSON.parse(savedCombos));
       } catch {
         // Si el navegador bloquea el guardado, el carrito sigue funcionando en la sesión.
       } finally {
@@ -446,7 +519,13 @@ export default function Home() {
   useEffect(() => {
     if (!cartReady) return;
     window.localStorage.setItem("republica-del-trapo-cart", JSON.stringify(cart));
-  }, [cart, cartReady]);
+    window.localStorage.setItem("republica-del-trapo-combos", JSON.stringify(activeCombos));
+  }, [cart, activeCombos, cartReady]);
+
+  useEffect(() => {
+    if (!cartReady || Object.keys(cart).length || !Object.keys(activeCombos).length) return;
+    setActiveCombos({});
+  }, [cart, activeCombos, cartReady]);
 
   useEffect(() => {
     const panelIsOpen = Boolean(selectedProduct || cartOpen || checkoutOpen || orderConfirmation);
@@ -479,6 +558,60 @@ export default function Home() {
     (total, item) => total + priceNumber(item.product.price) * item.quantity,
     0,
   );
+  const volumeSavings = Math.round(
+    cartItems.reduce(
+      (total, item) =>
+        total +
+        priceNumber(item.product.price) *
+          item.quantity *
+          volumeDiscountRate(item.product, item.quantity),
+      0,
+    ),
+  );
+  const appliedCombos = useMemo(() => {
+    const remainingCart = { ...cart };
+    return combos.map((combo) => {
+      const requestedCombos = activeCombos[combo.id] ?? 0;
+      const availableCombos = combo.items.reduce(
+        (available, item) =>
+          Math.min(available, Math.floor((remainingCart[item.name] ?? 0) / item.quantity)),
+        requestedCombos,
+      );
+      if (availableCombos > 0) {
+        combo.items.forEach((item) => {
+          remainingCart[item.name] = (remainingCart[item.name] ?? 0) - item.quantity * availableCombos;
+        });
+      }
+      return { combo, quantity: availableCombos };
+    });
+  }, [cart, activeCombos]);
+  const comboSavings = Math.round(
+    appliedCombos.reduce((total, { combo, quantity }) => {
+      if (!quantity) return total;
+      const comboTotal = combo.items.reduce((comboSum, item) => {
+        const product = products.find((candidate) => candidate.name === item.name);
+        return comboSum + priceNumber(product?.price) * item.quantity;
+      }, 0);
+      return total + comboTotal * comboSafeDiscountRate(combo) * quantity;
+    }, 0),
+  );
+  const promotionSavings = Math.min(subtotal, Math.max(volumeSavings, comboSavings));
+  const productsTotal = subtotal - promotionSavings;
+  const promotionLabel =
+    promotionSavings === comboSavings && comboSavings > 0
+      ? "Ahorro por combo"
+      : "Descuento por cantidad";
+  const selectedShippingZone = shippingZones.find((zone) => zone.id === shippingZone)!;
+  const shippingCost =
+    delivery === "domicilio" ? selectedShippingZone.price : delivery === "retiro" ? 0 : null;
+  const orderTotal = shippingCost === null ? null : productsTotal + shippingCost;
+  const detailBaseTotal = selectedProduct
+    ? priceNumber(selectedProduct.price) * detailQuantity
+    : 0;
+  const detailSavings = selectedProduct
+    ? Math.round(detailBaseTotal * volumeDiscountRate(selectedProduct, detailQuantity))
+    : 0;
+  const detailTotal = detailBaseTotal - detailSavings;
 
   function addToCart(product: Product, quantity = 1) {
     if (!product.price) {
@@ -522,6 +655,10 @@ export default function Home() {
       });
       return nextCart;
     });
+    setActiveCombos((current) => ({
+      ...current,
+      [combo.id]: (current[combo.id] ?? 0) + 1,
+    }));
     setCartOpen(true);
   }
 
@@ -537,7 +674,7 @@ export default function Home() {
       delivery === "retiro"
         ? "Retiro en punto a coordinar por Quesada y Cabildo"
         : delivery === "domicilio"
-          ? `Envío a domicilio${address ? `: ${address}` : ""}`
+          ? `Envío a domicilio · ${selectedShippingZone.name} (${money(selectedShippingZone.price)})${address ? `: ${address}` : ""}`
           : `Correo o transporte a todo el país${address ? `: ${address}` : ""}`;
     const paymentText =
       payment === "mercadopago"
@@ -560,8 +697,15 @@ export default function Home() {
       "",
       ...itemLines,
       "",
-      `Subtotal de productos: ${money(subtotal)}`,
-      "Envío: a calcular según zona / transporte",
+      `Subtotal de lista: ${money(subtotal)}`,
+      promotionSavings ? `${promotionLabel}: -${money(promotionSavings)}` : "",
+      `Total de productos: ${money(productsTotal)}`,
+      delivery === "domicilio"
+        ? `Envío: ${money(selectedShippingZone.price)}`
+        : delivery === "retiro"
+          ? "Envío: sin cargo — retiro"
+          : "Envío: a cotizar según correo o transporte",
+      orderTotal !== null ? `TOTAL DEL PEDIDO: ${money(orderTotal)}` : "",
       "",
       `Nombre: ${customerName}`,
       `Teléfono: ${customerPhone}`,
@@ -581,6 +725,7 @@ export default function Home() {
 
   function finishOrder() {
     setCart({});
+    setActiveCombos({});
     setOrderConfirmation(null);
   }
 
@@ -607,7 +752,8 @@ export default function Home() {
           <a href="#cocina">Cocina</a>
         </nav>
         <button className="nav-cta" type="button" onClick={() => setCartOpen(true)}>
-          Mi carrito <span className="cart-count" aria-label={`${cartCount} productos`}>{cartCount}</span>
+          <span className="nav-cta-label">Mi carrito</span>
+          <span className="cart-count" aria-label={`${cartCount} productos`}>{cartCount}</span>
         </button>
       </header>
 
@@ -762,8 +908,8 @@ export default function Home() {
             <h2>Combos del<br />barrio.</h2>
           </div>
           <p>
-            Elegimos productos que se usan juntos. Sumás el combo completo al carrito,
-            revisás las cantidades y podés cambiar lo que quieras antes de pedir.
+            Elegimos productos que se usan juntos y les aplicamos un ahorro real.
+            Sumás el combo, revisás las cantidades y podés cambiar todo antes de pedir.
           </p>
         </header>
         <div className="combo-grid">
@@ -772,6 +918,8 @@ export default function Home() {
               const product = products.find((candidate) => candidate.name === item.name);
               return total + priceNumber(product?.price) * item.quantity;
             }, 0);
+            const comboSavingsAmount = Math.round(comboTotal * comboSafeDiscountRate(combo));
+            const comboOfferPrice = comboTotal - comboSavingsAmount;
             return (
               <article className="combo-card" key={combo.id}>
                 <span className="combo-number">0{index + 1}</span>
@@ -797,14 +945,22 @@ export default function Home() {
                   })}
                 </ul>
                 <div className="combo-bottom">
-                  <div><small>Total de productos</small><strong>{money(comboTotal)}</strong></div>
+                  <div>
+                    <small>Precio del combo</small>
+                    <span className="combo-list-price">{money(comboTotal)}</span>
+                    <strong>{money(comboOfferPrice)}</strong>
+                    <em>Ahorrás {money(comboSavingsAmount)}</em>
+                  </div>
                   <button type="button" onClick={() => addCombo(combo)}>Sumar combo <span>＋</span></button>
                 </div>
               </article>
             );
           })}
         </div>
-        <p className="combo-note">¿Necesitás más cantidad? Al confirmar el pedido consultanos por beneficios según volumen.</p>
+        <p className="combo-note">
+          La mejor promo se aplica sola: 3% desde 5 unidades o 5% desde 10 del mismo producto.
+          Los descuentos no se acumulan entre sí.
+        </p>
       </section>
 
       <section className="how shell">
@@ -898,6 +1054,7 @@ export default function Home() {
               <p className="modal-detail">{selectedProduct.detail}</p>
               <dl className="modal-specs">
                 <div><dt>Calidad</dt><dd>{selectedProduct.quality}</dd></div>
+                <div><dt>Ideal para</dt><dd>{productUseCases[selectedProduct.name]}</dd></div>
                 <div><dt>Unidad de venta</dt><dd>{selectedProduct.saleUnit}</dd></div>
                 <div><dt>Presentación original</dt><dd>{selectedProduct.sourcePack}</dd></div>
               </dl>
@@ -905,8 +1062,13 @@ export default function Home() {
                 <>
                   <div className="modal-buy-row">
                     <div>
-                      <small>Precio por {selectedProduct.saleUnit}</small>
-                      <strong>{selectedProduct.price}</strong>
+                      <small>{detailSavings ? "Total con descuento" : `Precio por ${selectedProduct.saleUnit}`}</small>
+                      <strong>{detailSavings ? money(detailTotal) : selectedProduct.price}</strong>
+                      {detailSavings > 0 && (
+                        <span className="modal-saving">
+                          Ahorrás {money(detailSavings)} por cantidad
+                        </span>
+                      )}
                     </div>
                     <div className="quantity-control" aria-label="Cantidad">
                       <button type="button" onClick={() => setDetailQuantity((value) => Math.max(1, value - 1))} aria-label="Restar una unidad">−</button>
@@ -915,7 +1077,7 @@ export default function Home() {
                     </div>
                   </div>
                   <button className="modal-add" type="button" onClick={() => addToCart(selectedProduct, detailQuantity)}>
-                    Agregar {detailQuantity} al carrito · {money(priceNumber(selectedProduct.price) * detailQuantity)}
+                    Agregar {detailQuantity} al carrito · {money(detailTotal)}
                   </button>
                 </>
               ) : (
@@ -973,8 +1135,17 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="drawer-total">
-                  <div><span>Subtotal de productos</span><strong>{money(subtotal)}</strong></div>
-                  <p>El envío se calcula según la zona o el transporte elegido.</p>
+                  <div><span>Subtotal de lista</span><strong>{money(subtotal)}</strong></div>
+                  {promotionSavings > 0 && (
+                    <div className="saving-line">
+                      <span>{promotionLabel}</span><strong>− {money(promotionSavings)}</strong>
+                    </div>
+                  )}
+                  <div className="products-total"><span>Total de productos</span><strong>{money(productsTotal)}</strong></div>
+                  <p>
+                    Aplicamos automáticamente la mejor promoción. El envío se elige y calcula
+                    en el siguiente paso.
+                  </p>
                   <button className="checkout-button" type="button" onClick={beginCheckout}>
                     Continuar con la compra <span>→</span>
                   </button>
@@ -1039,7 +1210,7 @@ export default function Home() {
                   <div className="choice-list">
                     <label className={delivery === "domicilio" ? "choice-card selected" : "choice-card"}>
                       <input type="radio" name="delivery" value="domicilio" checked={delivery === "domicilio"} onChange={() => setDelivery("domicilio")} />
-                      <span><b>Envío a domicilio</b><small>CABA y zonas cercanas · costo según zona</small></span>
+                      <span><b>Envío a domicilio</b><small>CABA · tarifa según zona</small></span>
                     </label>
                     <label className={delivery === "retiro" ? "choice-card selected" : "choice-card"}>
                       <input type="radio" name="delivery" value="retiro" checked={delivery === "retiro"} onChange={() => setDelivery("retiro")} />
@@ -1050,6 +1221,23 @@ export default function Home() {
                       <span><b>Correo o transporte</b><small>Envíos a todo el país · costo a cotizar</small></span>
                     </label>
                   </div>
+                  {delivery === "domicilio" && (
+                    <label>
+                      Zona de envío
+                      <select
+                        name="shippingZone"
+                        value={shippingZone}
+                        onChange={(event) => setShippingZone(event.target.value as ShippingZoneId)}
+                      >
+                        {shippingZones.map((zone) => (
+                          <option value={zone.id} key={zone.id}>
+                            {zone.name} · {money(zone.price)}
+                          </option>
+                        ))}
+                      </select>
+                      <small>{selectedShippingZone.detail}</small>
+                    </label>
+                  )}
                   {delivery !== "retiro" && (
                     <label>
                       {delivery === "domicilio" ? "Dirección y barrio" : "Localidad, provincia y código postal"}
@@ -1097,9 +1285,33 @@ export default function Home() {
                     </p>
                   ))}
                 </div>
-                <div className="summary-line"><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
-                <div className="summary-line"><span>Envío</span><strong>A calcular</strong></div>
+                <div className="summary-line"><span>Subtotal de lista</span><strong>{money(subtotal)}</strong></div>
+                {promotionSavings > 0 && (
+                  <div className="summary-line summary-saving">
+                    <span>{promotionLabel}</span><strong>− {money(promotionSavings)}</strong>
+                  </div>
+                )}
+                <div className="summary-line"><span>Total de productos</span><strong>{money(productsTotal)}</strong></div>
+                <div className="summary-line">
+                  <span>Envío</span>
+                  <strong>
+                    {delivery === "domicilio"
+                      ? money(selectedShippingZone.price)
+                      : delivery === "retiro"
+                        ? "Sin cargo"
+                        : "A cotizar"}
+                  </strong>
+                </div>
+                <div className="summary-line summary-grand-total">
+                  <span>Total del pedido</span>
+                  <strong>{orderTotal === null ? `${money(productsTotal)} + envío` : money(orderTotal)}</strong>
+                </div>
                 <p className="checkout-honesty">
+                  {delivery === "domicilio"
+                    ? `Tarifa para ${selectedShippingZone.name}. Si la dirección no corresponde a esa zona, la corregimos antes de confirmar. `
+                    : delivery === "retiro"
+                      ? "Retiro sin costo en punto a coordinar por Quesada y Cabildo. "
+                      : "El correo o transporte se cotiza por separado y se confirma antes de despachar. "}
                   {payment === "mercadopago"
                     ? "Enviamos el pedido por WhatsApp. Después de confirmar stock y envío, recibís el enlace seguro de Mercado Pago."
                     : "Enviamos el pedido por WhatsApp y coordinamos el pago en efectivo al entregar o retirar."}
@@ -1127,7 +1339,7 @@ export default function Home() {
             <strong className="order-number">{orderConfirmation.orderNumber}</strong>
             <ol>
               <li><b>1.</b> Enviá el mensaje que quedó preparado en WhatsApp.</li>
-              <li><b>2.</b> Confirmamos stock y calculamos el envío.</li>
+              <li><b>2.</b> Confirmamos stock, zona y modalidad de entrega.</li>
               <li><b>3.</b> {orderConfirmation.payment === "mercadopago"
                 ? "Te mandamos el link de Mercado Pago."
                 : "Coordinamos el pago en efectivo."}</li>
