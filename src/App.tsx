@@ -633,6 +633,26 @@ function discountOpportunity(items: Array<{ product: Product; quantity: number }
   };
 }
 
+function BotMascot({ large = false }: { large?: boolean }) {
+  return (
+    <span className={large ? "bot-roll-icon large" : "bot-roll-icon"} aria-hidden="true">
+      <svg viewBox="0 0 72 72" focusable="false">
+        <path
+          className="bot-paper-sheet"
+          d="M29 18h24c7 0 12 5 12 12v27l-6-4-6 4-6-4-6 4-6-4-6 4V18Z"
+        />
+        <path className="bot-paper-stripe" d="M34 47h25" />
+        <circle className="bot-paper-roll" cx="27" cy="29" r="21" />
+        <circle className="bot-paper-core" cx="27" cy="29" r="9" />
+        <circle className="bot-paper-hole" cx="27" cy="29" r="3" />
+        <circle className="bot-paper-eye" cx="43" cy="31" r="2" />
+        <circle className="bot-paper-eye" cx="55" cy="31" r="2" />
+        <path className="bot-paper-smile" d="M44 38c3 4 7 4 10 0" />
+      </svg>
+    </span>
+  );
+}
+
 function ProductVisual({ product, priority = false }: { product: Product; priority?: boolean }) {
   return (
     <div className="product-photo">
@@ -1705,7 +1725,7 @@ export default function Home() {
         aria-controls="help-bot-panel"
         onClick={() => setBotOpen((current) => !current)}
       >
-        <span className="bot-roll-icon" aria-hidden="true"><i /><b>RDT</b></span>
+        <BotMascot />
         <span>
           <small>¿Necesitás una mano?</small>
           <b>Preguntale al Trapo</b>
@@ -1716,7 +1736,7 @@ export default function Home() {
       {botOpen && (
         <aside className="help-bot-panel" id="help-bot-panel" role="dialog" aria-label="Asistente de compras">
           <header className="help-bot-header">
-            <span className="bot-roll-icon large" aria-hidden="true"><i /><b>RDT</b></span>
+            <BotMascot large />
             <div>
               <small>ASESOR DEL BARRIO</small>
               <h2>El Trapo te da una mano</h2>
