@@ -1844,52 +1844,27 @@ footer > a:last-child { justify-self: end; font-size: 14px; font-weight: 900; }
   font-weight: 900;
 }
 .bot-roll-icon {
-  position: relative;
-  display: flex;
-  width: 44px;
-  height: 44px;
+  display: grid;
+  width: 48px;
+  height: 48px;
   flex: 0 0 auto;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 5px;
-  overflow: hidden;
-  border: 2px solid var(--ink);
-  border-radius: 12px 17px 17px 12px;
-  background: white;
-  box-shadow: inset -7px 0 0 var(--sky-soft);
-}
-.bot-roll-icon::after {
-  position: absolute;
-  right: -5px;
-  bottom: -7px;
-  width: 31px;
-  height: 13px;
-  border: 2px solid var(--ink);
-  border-radius: 0 0 11px 11px;
-  background: white;
-  content: "";
-  transform: rotate(-7deg);
-}
-.bot-roll-icon > i {
-  position: absolute;
-  z-index: 2;
-  top: 10px;
-  left: 7px;
-  width: 16px;
-  height: 16px;
+  place-items: center;
   border: 2px solid var(--ink);
   border-radius: 50%;
-  background: var(--sun);
+  background: var(--cream);
+  box-shadow: 3px 3px 0 var(--ink);
 }
-.bot-roll-icon > b {
-  position: relative;
-  z-index: 3;
-  font: 950 7px/1 var(--font-geist-mono), monospace;
-  letter-spacing: -.04em;
-}
-.bot-roll-icon.large { width: 54px; height: 54px; border-radius: 14px 20px 20px 14px; }
-.bot-roll-icon.large > i { top: 12px; left: 8px; width: 20px; height: 20px; }
-.bot-roll-icon.large > b { font-size: 8px; }
+.bot-roll-icon svg { display: block; width: 43px; height: 43px; overflow: visible; }
+.bot-roll-icon.large { width: 60px; height: 60px; }
+.bot-roll-icon.large svg { width: 55px; height: 55px; }
+.bot-paper-sheet, .bot-paper-roll { fill: white; stroke: var(--ink); stroke-linejoin: round; stroke-width: 3.5; }
+.bot-paper-sheet { fill: var(--sky-soft); }
+.bot-paper-roll { fill: white; }
+.bot-paper-core { fill: var(--sun); stroke: var(--ink); stroke-width: 3; }
+.bot-paper-hole { fill: var(--cream); }
+.bot-paper-stripe { fill: none; stroke: var(--sky); stroke-linecap: round; stroke-width: 4; }
+.bot-paper-eye { fill: var(--ink); }
+.bot-paper-smile { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-width: 2.5; }
 
 .help-bot-panel {
   position: fixed;
@@ -2783,6 +2758,7 @@ footer > a:last-child { justify-self: end; font-size: 14px; font-weight: 900; }
   .help-bot-header { padding: 10px; }
   .help-bot-header h2 { font-size: 18px; }
   .bot-roll-icon.large { width: 48px; height: 48px; }
+  .bot-roll-icon.large svg { width: 44px; height: 44px; }
   .help-bot-foot { padding: 9px 10px; }
   .product-modal {
     width: calc(100vw - 18px);
