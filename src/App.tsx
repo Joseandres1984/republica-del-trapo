@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import embeddedImages from "./embeddedAssets";
 
 const phone = "5491157943584";
+const minimumHomeDeliveryOrder = 15_000;
 
 type Product = {
   name: string;
@@ -16,6 +17,8 @@ type Product = {
   category: "higienicos" | "bobinas" | "intercaladas" | "cocina";
   image: string;
 };
+
+type CatalogFilter = "todos" | Product["category"];
 
 const products: Product[] = [
   {
@@ -472,6 +475,13 @@ function money(value: number) {
   return `$${new Intl.NumberFormat("es-AR").format(Math.round(value))}`;
 }
 
+function normalizeSearch(value: string) {
+  return value
+    .toLocaleLowerCase("es-AR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 function volumeDiscountRate(_product: Product, quantity: number) {
   const requestedRate = quantity >= 10 ? 0.05 : quantity >= 5 ? 0.03 : 0;
   return Math.min(requestedRate, validatedMaximumDiscountRate);
@@ -603,10 +613,10 @@ function ProductCard({
 export default function Home() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [activeCombos, setActiveCombos] = useState<Record<string, number>>({});
-  const [builderQuantities, setBuilderQuantities] = useState<Record<string, number>>({
-    ...builderPresets[0].quantities,
-  });
-  const [selectedBuilderPreset, setSelectedBuilderPreset] = useState<string | null>("casa");
+  const [builderQuantities, setBuilderQuantities] = useState<Record<string, number>>({});
+  const [selectedBuilderPreset, setSelectedBuilderPreset] = useState<string | null>("libre");
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogFilter, setCatalogFilter] = useState<CatalogFilter>("todos");
   const [celebrationId, setCelebrationId] = useState(0);
   const [cartReady, setCartReady] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -730,6 +740,8 @@ export default function Home() {
       ? "Ahorro por combo"
       : "Descuento por cantidad";
   const selectedShippingZone = shippingZones.find((zone) => zone.id === shippingZone)!;
+  const homeDeliveryMinimumMissing = Math.max(0, minimumHomeDeliveryOrder - subtotal);
+  const homeDeliveryBlocked = delivery === "domicilio" && homeDeliveryMinimumMissing > 0;
   const shippingCost =
     delivery === "domicilio" ? selectedShippingZone.price : delivery === "retiro" ? 0 : null;
   const orderTotal = shippingCost === null ? null : productsTotal + shippingCost;
@@ -778,6 +790,41 @@ export default function Home() {
       volumeDiscountRate(weeklyOfferProduct, weeklyOffer.quantity),
   );
   const weeklyOfferTotal = weeklyOfferBaseTotal - weeklyOfferSavings;
+  const normalizedCatalogQuery = normalizeSearch(catalogQuery.trim());
+  const filteredCatalogProducts = useMemo(
+    () =>
+      products.filter((product) => {
+        const matchesCategory =
+          catalogFilter === "todos" || product.category === catalogFilter;
+        if (!matchesCategory) return false;
+        if (!normalizedCatalogQuery) return true;
+        return normalizeSearch(
+          [
+            product.name,
+            product.brand,
+            product.quality,
+            product.detail,
+            productUseCases[product.name],
+          ].join(" "),
+        ).includes(normalizedCatalogQuery);
+      }),
+    [catalogFilter, normalizedCatalogQuery],
+  );
+  const catalogIsPreview = catalogFilter === "todos" && !normalizedCatalogQuery;
+  const visibleCatalogCategories = categories
+    .map((category) => {
+      const matchingProducts = filteredCatalogProducts.filter(
+        (product) => product.category === category.id,
+      );
+      return {
+        ...category,
+        matchingProducts,
+        visibleProducts: catalogIsPreview
+          ? matchingProducts.slice(0, 4)
+          : matchingProducts,
+      };
+    })
+    .filter((category) => category.matchingProducts.length > 0);
 
   function celebrate() {
     setCelebrationId(Date.now());
@@ -865,6 +912,7 @@ export default function Home() {
 
   function sendOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (homeDeliveryBlocked) return;
     const data = new FormData(event.currentTarget);
     const customerName = String(data.get("name") ?? "").trim();
     const customerPhone = String(data.get("phone") ?? "").trim();
@@ -947,10 +995,10 @@ export default function Home() {
           />
         </a>
         <nav aria-label="Navegación principal">
-          <a href="#higienicos">Higiénicos</a>
-          <a href="#bobinas">Bobinas</a>
-          <a href="#intercaladas">Intercaladas</a>
-          <a href="#cocina">Cocina</a>
+          <a href="#catalogo" onClick={() => setCatalogFilter("higienicos")}>Higiénicos</a>
+          <a href="#catalogo" onClick={() => setCatalogFilter("bobinas")}>Bobinas</a>
+          <a href="#catalogo" onClick={() => setCatalogFilter("intercaladas")}>Intercaladas</a>
+          <a href="#catalogo" onClick={() => setCatalogFilter("cocina")}>Cocina</a>
           <a href="#oferta-del-barrio">Oferta</a>
           <a href="#arma-tu-pedido">Armá la tuya</a>
         </nav>
@@ -1028,6 +1076,57 @@ export default function Home() {
         HOJA SIMPLE <b>✦</b> DOBLE HOJA <b>✦</b> EXTRA BLANCO <b>✦</b> JUMBO <b>✦</b> PREMIUM
       </div>
 
+      <section className="weekly-offer shell" id="oferta-del-barrio">
+        <div className="offer-copy">
+          <p className="offer-kicker">La oferta del barrio · cambia cada semana</p>
+          <h2>{weeklyOffer.headline}</h2>
+          <p>{weeklyOffer.description}</p>
+          <div className="offer-pricing">
+            <span>
+              <small>Precio de lista</small>
+              <del>{money(weeklyOfferBaseTotal)}</del>
+            </span>
+            <span>
+              <small>Precio del barrio</small>
+              <strong>{money(weeklyOfferTotal)}</strong>
+            </span>
+          </div>
+          <p className="offer-saving">
+            Ahorrás {money(weeklyOfferSavings)} · 5% aplicado automáticamente
+          </p>
+          <button
+            className="offer-button"
+            type="button"
+            onClick={() => addToCart(weeklyOfferProduct, weeklyOffer.quantity)}
+          >
+            Sumar la oferta <span>＋</span>
+          </button>
+          <small className="offer-honesty">
+            Sin reloj falso ni letra chica: es el descuento real por llevar 10 unidades.
+          </small>
+        </div>
+        <div className="offer-visual">
+          <div className="offer-sun" />
+          <span className="offer-badge">5%<small>menos</small></span>
+          <span className="offer-week">SELECCIÓN SEMANAL</span>
+          <figure>
+            <img
+              src={weeklyOfferProduct.image}
+              alt={`${weeklyOffer.quantity} unidades de ${weeklyOfferProduct.name}`}
+              width={720}
+              height={720}
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              <b>{weeklyOffer.quantity}×</b>
+              <span>{weeklyOfferProduct.name}</span>
+              <small>{weeklyOfferProduct.saleUnit} cada uno</small>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
       <section className="patria-mural" aria-labelledby="mural-title">
         <img
           className="patria-mural-art"
@@ -1053,6 +1152,7 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="catalog-area">
       <section className="catalog-intro shell" id="catalogo">
         <div>
           <p className="eyebrow">El seleccionado del barrio</p>
@@ -1067,16 +1167,61 @@ export default function Home() {
             Imágenes recreadas a partir de las presentaciones de referencia. El diseño del
             envase puede variar según disponibilidad del proveedor.
           </p>
-          <div className="category-links" aria-label="Categorías">
-            {categories.map((category) => (
-              <a href={`#${category.id}`} key={category.id}>{category.title}</a>
-            ))}
-          </div>
+        </div>
+      </section>
+
+      <section className="catalog-tools" aria-label="Buscar y filtrar productos">
+        <label className="catalog-search">
+          <span aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            value={catalogQuery}
+            onChange={(event) => setCatalogQuery(event.target.value)}
+            placeholder="Buscar por producto, marca o calidad"
+            aria-label="Buscar productos"
+          />
+        </label>
+        <div className="category-links" aria-label="Filtrar por categoría">
+          <button
+            className={catalogFilter === "todos" ? "selected" : ""}
+            type="button"
+            onClick={() => setCatalogFilter("todos")}
+          >
+            Todo
+          </button>
+          {categories.map((category) => (
+            <button
+              className={catalogFilter === category.id ? "selected" : ""}
+              type="button"
+              key={category.id}
+              onClick={() => setCatalogFilter(category.id)}
+            >
+              {category.title}
+            </button>
+          ))}
+        </div>
+        <div className="catalog-result-count" aria-live="polite">
+          <span><b>{filteredCatalogProducts.length}</b> {filteredCatalogProducts.length === 1 ? "producto encontrado" : "productos encontrados"}</span>
+          {(catalogQuery || catalogFilter !== "todos") && (
+            <button
+              type="button"
+              onClick={() => {
+                setCatalogQuery("");
+                setCatalogFilter("todos");
+              }}
+            >
+              Limpiar filtros
+            </button>
+          )}
         </div>
       </section>
 
       <section className="catalog-shell">
-        {categories.map((category, categoryIndex) => (
+        {visibleCatalogCategories.map((category) => {
+          const categoryIndex = categories.findIndex(
+            (candidate) => candidate.id === category.id,
+          );
+          return (
           <div className="category-section" id={category.id} key={category.id}>
             <header className="category-heading">
               <div>
@@ -1086,23 +1231,48 @@ export default function Home() {
               <div>
                 <h2>{category.title}</h2>
                 <p>{category.description}</p>
+                {category.matchingProducts.length > category.visibleProducts.length && (
+                  <button
+                    className="show-category"
+                    type="button"
+                    onClick={() => setCatalogFilter(category.id)}
+                  >
+                    Ver los {category.matchingProducts.length} productos <span>→</span>
+                  </button>
+                )}
               </div>
             </header>
             <div className="product-grid">
-              {products
-                .filter((product) => product.category === category.id)
-                .map((product) => (
-                  <ProductCard
-                    product={product}
-                    key={product.name}
-                    onView={openDetail}
-                    onAdd={addToCart}
-                  />
-                ))}
+              {category.visibleProducts.map((product) => (
+                <ProductCard
+                  product={product}
+                  key={product.name}
+                  onView={openDetail}
+                  onAdd={addToCart}
+                />
+              ))}
             </div>
           </div>
-        ))}
+          );
+        })}
+        {!visibleCatalogCategories.length && (
+          <div className="catalog-empty">
+            <span>⌕</span>
+            <h3>No encontramos ese producto.</h3>
+            <p>Probá con “Newpel”, “doble hoja”, “bobina” o elegí otra categoría.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setCatalogQuery("");
+                setCatalogFilter("todos");
+              }}
+            >
+              Ver todo el catálogo
+            </button>
+          </div>
+        )}
       </section>
+      </div>
 
       <section className="combos shell" id="combos">
         <header className="combos-heading">
@@ -1292,57 +1462,6 @@ export default function Home() {
             </button>
             <small className="builder-rule">3% desde 5 · 5% desde 10 del mismo producto</small>
           </aside>
-        </div>
-      </section>
-
-      <section className="weekly-offer shell" id="oferta-del-barrio">
-        <div className="offer-copy">
-          <p className="offer-kicker">La oferta del barrio · cambia cada semana</p>
-          <h2>{weeklyOffer.headline}</h2>
-          <p>{weeklyOffer.description}</p>
-          <div className="offer-pricing">
-            <span>
-              <small>Precio de lista</small>
-              <del>{money(weeklyOfferBaseTotal)}</del>
-            </span>
-            <span>
-              <small>Precio del barrio</small>
-              <strong>{money(weeklyOfferTotal)}</strong>
-            </span>
-          </div>
-          <p className="offer-saving">
-            Ahorrás {money(weeklyOfferSavings)} · 5% aplicado automáticamente
-          </p>
-          <button
-            className="offer-button"
-            type="button"
-            onClick={() => addToCart(weeklyOfferProduct, weeklyOffer.quantity)}
-          >
-            Sumar la oferta <span>＋</span>
-          </button>
-          <small className="offer-honesty">
-            Sin reloj falso ni letra chica: es el descuento real por llevar 10 unidades.
-          </small>
-        </div>
-        <div className="offer-visual">
-          <div className="offer-sun" />
-          <span className="offer-badge">5%<small>menos</small></span>
-          <span className="offer-week">SELECCIÓN SEMANAL</span>
-          <figure>
-            <img
-              src={weeklyOfferProduct.image}
-              alt={`${weeklyOffer.quantity} unidades de ${weeklyOfferProduct.name}`}
-              width={720}
-              height={720}
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption>
-              <b>{weeklyOffer.quantity}×</b>
-              <span>{weeklyOfferProduct.name}</span>
-              <small>{weeklyOfferProduct.saleUnit} cada uno</small>
-            </figcaption>
-          </figure>
         </div>
       </section>
 
@@ -1602,6 +1721,16 @@ export default function Home() {
                     </div>
                   )}
                   <div className="products-total"><span>Total de productos</span><strong>{money(productsTotal)}</strong></div>
+                  <div className={homeDeliveryMinimumMissing ? "cart-minimum" : "cart-minimum complete"}>
+                    <b>
+                      {homeDeliveryMinimumMissing
+                        ? `Para envío CABA te faltan ${money(homeDeliveryMinimumMissing)}`
+                        : "Tu pedido ya alcanza el mínimo para envío CABA"}
+                    </b>
+                    <span>
+                      Mínimo {money(minimumHomeDeliveryOrder)} antes de descuentos · retiro sin mínimo
+                    </span>
+                  </div>
                   <p>
                     Aplicamos automáticamente la mejor promoción. El envío se elige y calcula
                     en el siguiente paso.
@@ -1670,7 +1799,7 @@ export default function Home() {
                   <div className="choice-list">
                     <label className={delivery === "domicilio" ? "choice-card selected" : "choice-card"}>
                       <input type="radio" name="delivery" value="domicilio" checked={delivery === "domicilio"} onChange={() => setDelivery("domicilio")} />
-                      <span><b>Envío a domicilio</b><small>CABA · tarifa según zona</small></span>
+                      <span><b>Envío a domicilio</b><small>CABA · mínimo {money(minimumHomeDeliveryOrder)}</small></span>
                     </label>
                     <label className={delivery === "retiro" ? "choice-card selected" : "choice-card"}>
                       <input type="radio" name="delivery" value="retiro" checked={delivery === "retiro"} onChange={() => setDelivery("retiro")} />
@@ -1681,6 +1810,19 @@ export default function Home() {
                       <span><b>Correo o transporte</b><small>Envíos a todo el país · costo a cotizar</small></span>
                     </label>
                   </div>
+                  {delivery === "domicilio" && (
+                    <div className={homeDeliveryBlocked ? "delivery-minimum-alert" : "delivery-minimum-alert complete"}>
+                      <b>
+                        {homeDeliveryBlocked
+                          ? `Te faltan ${money(homeDeliveryMinimumMissing)} para elegir envío a domicilio.`
+                          : "Tu pedido ya alcanza el mínimo para envío a domicilio."}
+                      </b>
+                      <span>
+                        El mínimo se calcula sobre los productos antes de descuentos.
+                        También podés elegir retiro sin mínimo.
+                      </span>
+                    </div>
+                  )}
                   {delivery === "domicilio" && (
                     <label>
                       Zona de envío
@@ -1776,8 +1918,12 @@ export default function Home() {
                     ? "Enviamos el pedido por WhatsApp. Después de confirmar stock y envío, recibís el enlace seguro de Mercado Pago."
                     : "Enviamos el pedido por WhatsApp y coordinamos el pago en efectivo al entregar o retirar."}
                 </p>
-                <button className="checkout-button" type="submit">
-                  {payment === "mercadopago" ? "Enviar pedido y solicitar link" : "Enviar pedido"}{" "}
+                <button className="checkout-button" type="submit" disabled={homeDeliveryBlocked}>
+                  {homeDeliveryBlocked
+                    ? `Faltan ${money(homeDeliveryMinimumMissing)} para envío`
+                    : payment === "mercadopago"
+                      ? "Enviar pedido y solicitar link"
+                      : "Enviar pedido"}{" "}
                   <span>↗</span>
                 </button>
               </aside>
