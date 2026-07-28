@@ -375,6 +375,37 @@ const builderPresets = [
   },
 ] as const;
 
+const weeklyOffers = [
+  {
+    id: "papel-80",
+    productName: "Papel Higiénico 80 m",
+    quantity: 10,
+    headline: "Diez rollos. Cero apuro.",
+    description: "El rendidor del catálogo para olvidarte de reponer por un buen rato.",
+  },
+  {
+    id: "extra-blanco",
+    productName: "Papel Higiénico Extra Blanco",
+    quantity: 10,
+    headline: "Más blanco, menos vueltas.",
+    description: "Un armado práctico para casa, oficina o consultorio.",
+  },
+  {
+    id: "intercaladas",
+    productName: "Toallas Intercaladas Beige",
+    quantity: 10,
+    headline: "El dispenser, resuelto.",
+    description: "Paquetes rendidores para baños con movimiento todos los días.",
+  },
+  {
+    id: "papel-30",
+    productName: "Papel Higiénico 30 m",
+    quantity: 10,
+    headline: "La clásica del barrio.",
+    description: "Una opción simple y económica para tener siempre a mano.",
+  },
+] as const;
+
 const shippingZones = [
   {
     id: "cercania",
@@ -448,6 +479,15 @@ function volumeDiscountRate(_product: Product, quantity: number) {
 
 function comboSafeDiscountRate(combo: (typeof combos)[number]) {
   return Math.min(combo.discountRate, validatedMaximumDiscountRate);
+}
+
+function currentWeeklyOffer() {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), 0, 1);
+  const elapsedDays = Math.floor((now.getTime() - firstDay.getTime()) / 86_400_000);
+  const mondayOffset = (firstDay.getDay() + 6) % 7;
+  const weekNumber = Math.floor((elapsedDays + mondayOffset) / 7);
+  return weeklyOffers[weekNumber % weeklyOffers.length];
 }
 
 function discountOpportunity(items: Array<{ product: Product; quantity: number }>) {
@@ -727,6 +767,17 @@ export default function Home() {
   );
   const builderTotal = builderSubtotal - builderSavings;
   const builderOpportunity = discountOpportunity(builderItems);
+  const weeklyOffer = currentWeeklyOffer();
+  const weeklyOfferProduct = products.find(
+    (product) => product.name === weeklyOffer.productName,
+  )!;
+  const weeklyOfferBaseTotal =
+    priceNumber(weeklyOfferProduct.price) * weeklyOffer.quantity;
+  const weeklyOfferSavings = Math.round(
+    weeklyOfferBaseTotal *
+      volumeDiscountRate(weeklyOfferProduct, weeklyOffer.quantity),
+  );
+  const weeklyOfferTotal = weeklyOfferBaseTotal - weeklyOfferSavings;
 
   function celebrate() {
     setCelebrationId(Date.now());
@@ -900,6 +951,7 @@ export default function Home() {
           <a href="#bobinas">Bobinas</a>
           <a href="#intercaladas">Intercaladas</a>
           <a href="#cocina">Cocina</a>
+          <a href="#oferta-del-barrio">Oferta</a>
           <a href="#arma-tu-pedido">Armá la tuya</a>
         </nav>
         <button className="nav-cta" type="button" onClick={() => setCartOpen(true)}>
@@ -1243,6 +1295,57 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="weekly-offer shell" id="oferta-del-barrio">
+        <div className="offer-copy">
+          <p className="offer-kicker">La oferta del barrio · cambia cada semana</p>
+          <h2>{weeklyOffer.headline}</h2>
+          <p>{weeklyOffer.description}</p>
+          <div className="offer-pricing">
+            <span>
+              <small>Precio de lista</small>
+              <del>{money(weeklyOfferBaseTotal)}</del>
+            </span>
+            <span>
+              <small>Precio del barrio</small>
+              <strong>{money(weeklyOfferTotal)}</strong>
+            </span>
+          </div>
+          <p className="offer-saving">
+            Ahorrás {money(weeklyOfferSavings)} · 5% aplicado automáticamente
+          </p>
+          <button
+            className="offer-button"
+            type="button"
+            onClick={() => addToCart(weeklyOfferProduct, weeklyOffer.quantity)}
+          >
+            Sumar la oferta <span>＋</span>
+          </button>
+          <small className="offer-honesty">
+            Sin reloj falso ni letra chica: es el descuento real por llevar 10 unidades.
+          </small>
+        </div>
+        <div className="offer-visual">
+          <div className="offer-sun" />
+          <span className="offer-badge">5%<small>menos</small></span>
+          <span className="offer-week">SELECCIÓN SEMANAL</span>
+          <figure>
+            <img
+              src={weeklyOfferProduct.image}
+              alt={`${weeklyOffer.quantity} unidades de ${weeklyOfferProduct.name}`}
+              width={720}
+              height={720}
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              <b>{weeklyOffer.quantity}×</b>
+              <span>{weeklyOfferProduct.name}</span>
+              <small>{weeklyOfferProduct.saleUnit} cada uno</small>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
       <section className="how shell">
         <div className="how-title">
           <p className="eyebrow">Cero burocracia</p>
@@ -1280,6 +1383,51 @@ export default function Home() {
               <p>{faq.answer}</p>
             </details>
           ))}
+        </div>
+      </section>
+
+      <section className="reviews shell" id="opiniones">
+        <header className="reviews-heading">
+          <p className="eyebrow">La voz del barrio</p>
+          <h2>Opiniones<br /><span>de verdad.</span></h2>
+          <p>
+            Esta vidriera recién empieza. Las reseñas van a aparecer solamente cuando
+            las mande un cliente y nos autorice a publicarlas.
+          </p>
+        </header>
+        <div className="reviews-board">
+          <article className="reviews-promise">
+            <span className="quote-mark">“</span>
+            <p className="reviews-script">Acá no compramos estrellas.</p>
+            <h3>Cero reseñas inventadas.</h3>
+            <p>
+              Preferimos arrancar sin testimonios antes que llenar la página de nombres
+              y comentarios que nunca existieron.
+            </p>
+            <div className="review-seals">
+              <span>CLIENTES REALES</span>
+              <span>CON PERMISO</span>
+              <span>SIN CHAMUYO</span>
+            </div>
+          </article>
+          <aside className="review-invite">
+            <p className="review-pin">¿YA COMPRASTE?</p>
+            <h3>Dejanos tu opinión.</h3>
+            <p>Contanos tres cosas y ayudá al próximo vecino a elegir:</p>
+            <ol>
+              <li><b>1</b><span>Qué producto compraste.</span></li>
+              <li><b>2</b><span>Cómo fue la entrega.</span></li>
+              <li><b>3</b><span>Qué tal rindió.</span></li>
+            </ol>
+            <a
+              href={wa("¡Hola! Ya compré en República del Trapo y quiero dejar una opinión.\n\nProducto:\nMi experiencia:\n¿Autorizo a publicar mi nombre de pila?: Sí / No")}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Mandar mi opinión por WhatsApp <span>↗</span>
+            </a>
+            <small>Antes de publicar cualquier mensaje te pedimos autorización.</small>
+          </aside>
         </div>
       </section>
 
