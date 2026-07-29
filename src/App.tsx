@@ -19,7 +19,7 @@ type Product = {
 };
 
 type CatalogFilter = "todos" | Product["category"];
-type BotView = "menu" | "casa" | "comercio" | "envios" | "pagos";
+type BotView = "menu" | "casa" | "comercio" | "presupuesto" | "envios" | "pagos";
 
 type BotRecommendation = {
   id: string;
@@ -338,6 +338,17 @@ const productUseCases: Record<string, string> = {
   "Rollo Cocina Gigante 200 Paños": "Alto consumo · gran formato",
 };
 
+const productBadges: Record<string, string> = {
+  "Papel Higiénico 80 m": "Rinde más",
+  "Papel Higiénico Jumbo Eco": "Ideal comercio",
+  "Papel Higiénico Premium 300 m": "300 metros",
+  "Max Plus 80 m": "Marca reconocida",
+  "Doble Hoja 20 m": "Doble hoja",
+  "Toalla de Papel 200 m": "Uso profesional",
+  "Toallas Intercaladas Beige": "Precio accesible",
+  "Rollo Cocina 120 Paños": "Pack x3",
+};
+
 // Tope validado fuera del sitio contra los costos actuales, incluyendo el recargo
 // del proveedor, una reserva operativa del 8% y un aporte mínimo del 18%.
 // Los costos mayoristas no se publican en este repositorio abierto.
@@ -461,6 +472,57 @@ const botRecommendations: BotRecommendation[] = [
   },
 ];
 
+const budgetOptions = [15_000, 20_000, 30_000, 45_000] as const;
+
+const budgetRecommendations: BotRecommendation[] = [
+  {
+    id: "presupuesto-15",
+    audience: "casa",
+    eyebrow: "Hasta $15.000",
+    name: "Casa práctica",
+    description: "Un pack de baño y otro de cocina para arrancar sin pasarte.",
+    items: [
+      { name: "Max Plus 80 m", quantity: 1 },
+      { name: "Rollo Cocina 120 Paños", quantity: 1 },
+    ],
+  },
+  {
+    id: "presupuesto-20",
+    audience: "casa",
+    eyebrow: "Hasta $20.000",
+    name: "Familia con aguante",
+    description: "Diez rollos rendidores con el descuento máximo y cocina resuelta.",
+    items: [
+      { name: "Papel Higiénico 80 m", quantity: 10 },
+      { name: "Rollo Cocina 120 Paños", quantity: 2 },
+    ],
+  },
+  {
+    id: "presupuesto-30",
+    audience: "comercio",
+    eyebrow: "Hasta $30.000",
+    name: "Comercio a full",
+    description: "Baño y secado preparados para un local con movimiento diario.",
+    items: [
+      { name: "Papel Higiénico Jumbo Eco", quantity: 5 },
+      { name: "Toallas Intercaladas Beige", quantity: 5 },
+      { name: "Toalla de Papel 200 m", quantity: 2 },
+    ],
+  },
+  {
+    id: "presupuesto-45",
+    audience: "comercio",
+    eyebrow: "Hasta $45.000",
+    name: "Stock de batalla",
+    description: "Formatos institucionales en cantidad, con el descuento máximo aplicado.",
+    items: [
+      { name: "Papel Higiénico Jumbo Eco", quantity: 10 },
+      { name: "Toallas Intercaladas Beige", quantity: 10 },
+      { name: "Toalla de Papel 200 m", quantity: 2 },
+    ],
+  },
+];
+
 const weeklyOffers = [
   {
     id: "papel-80",
@@ -556,6 +618,45 @@ function priceNumber(price?: string) {
 
 function money(value: number) {
   return `$${new Intl.NumberFormat("es-AR").format(Math.round(value))}`;
+}
+
+function encodeSharedCart(cart: Record<string, number>) {
+  const payload = products
+    .map((product, index) => [index, cart[product.name] ?? 0] as const)
+    .filter(([, quantity]) => quantity > 0);
+  return window
+    .btoa(JSON.stringify(payload))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replace(/=+$/g, "");
+}
+
+function decodeSharedCart(value: string) {
+  try {
+    const normalized = value.replaceAll("-", "+").replaceAll("_", "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const payload = JSON.parse(window.atob(padded));
+    if (!Array.isArray(payload)) return null;
+
+    const restored: Record<string, number> = {};
+    payload.forEach((entry) => {
+      if (!Array.isArray(entry) || entry.length !== 2) return;
+      const [productIndex, quantity] = entry;
+      if (
+        !Number.isInteger(productIndex) ||
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        quantity > 99
+      ) {
+        return;
+      }
+      const product = products[productIndex];
+      if (product?.price) restored[product.name] = quantity;
+    });
+    return Object.keys(restored).length ? restored : null;
+  } catch {
+    return null;
+  }
 }
 
 function normalizeSearch(value: string) {
@@ -680,6 +781,9 @@ function ProductCard({
         aria-label={`Ver detalle de ${product.name}`}
       >
         <ProductVisual product={product} />
+        {productBadges[product.name] && (
+          <span className="product-highlight-badge">{productBadges[product.name]}</span>
+        )}
       </button>
       <div className="product-info">
         <div className="product-brand">
@@ -734,6 +838,9 @@ export default function Home() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [botOpen, setBotOpen] = useState(false);
   const [botView, setBotView] = useState<BotView>("menu");
+  const [botBudget, setBotBudget] = useState<number>(20_000);
+  const [sharedCartLoaded, setSharedCartLoaded] = useState(false);
+  const [cartShareStatus, setCartShareStatus] = useState<"idle" | "copied" | "shared">("idle");
   const [orderConfirmation, setOrderConfirmation] = useState<{
     orderNumber: string;
     whatsAppUrl: string;
@@ -746,10 +853,19 @@ export default function Home() {
   useEffect(() => {
     const restoreCart = window.setTimeout(() => {
       try {
+        const sharedValue = new URLSearchParams(window.location.search).get("pedido");
+        const sharedCart = sharedValue ? decodeSharedCart(sharedValue) : null;
         const savedCart = window.localStorage.getItem("republica-del-trapo-cart");
         const savedCombos = window.localStorage.getItem("republica-del-trapo-combos");
-        if (savedCart) setCart(JSON.parse(savedCart));
-        if (savedCombos) setActiveCombos(JSON.parse(savedCombos));
+        if (sharedCart) {
+          setCart(sharedCart);
+          setActiveCombos({});
+          setSharedCartLoaded(true);
+          setCartOpen(true);
+        } else {
+          if (savedCart) setCart(JSON.parse(savedCart));
+          if (savedCombos) setActiveCombos(JSON.parse(savedCombos));
+        }
       } catch {
         // Si el navegador bloquea el guardado, el carrito sigue funcionando en la sesión.
       } finally {
@@ -769,6 +885,10 @@ export default function Home() {
     if (!cartReady || Object.keys(cart).length || !Object.keys(activeCombos).length) return;
     setActiveCombos({});
   }, [cart, activeCombos, cartReady]);
+
+  useEffect(() => {
+    setCartShareStatus("idle");
+  }, [cart]);
 
   useEffect(() => {
     if (!celebrationId) return;
@@ -902,6 +1022,12 @@ export default function Home() {
       volumeDiscountRate(weeklyOfferProduct, weeklyOffer.quantity),
   );
   const weeklyOfferTotal = weeklyOfferBaseTotal - weeklyOfferSavings;
+  const budgetRecommendation =
+    budgetRecommendations
+      .filter((recommendation) => botRecommendationTotal(recommendation) <= botBudget)
+      .slice(-1)[0] ?? budgetRecommendations[0];
+  const budgetRecommendationPrice = botRecommendationTotal(budgetRecommendation);
+  const budgetRemaining = Math.max(0, botBudget - budgetRecommendationPrice);
   const normalizedCatalogQuery = normalizeSearch(catalogQuery.trim());
   const filteredCatalogProducts = useMemo(
     () =>
@@ -975,6 +1101,33 @@ export default function Home() {
   function beginCheckout() {
     setCartOpen(false);
     setCheckoutOpen(true);
+  }
+
+  async function shareCart() {
+    if (!cartItems.length) return;
+
+    const shareUrl = new URL(window.location.href);
+    shareUrl.search = "";
+    shareUrl.hash = "";
+    shareUrl.searchParams.set("pedido", encodeSharedCart(cart));
+    const shareData = {
+      title: "Mi pedido de República del Trapo",
+      text: `Te comparto este carrito con ${cartCount} ${cartCount === 1 ? "producto" : "productos"}.`,
+      url: shareUrl.toString(),
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        setCartShareStatus("shared");
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        setCartShareStatus("copied");
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setCartShareStatus("idle");
+    }
   }
 
   function addCombo(combo: (typeof combos)[number]) {
@@ -1635,6 +1788,60 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="trust shell" id="confianza">
+        <header className="trust-heading">
+          <p className="eyebrow">Del otro lado hay personas</p>
+          <h2>Comprar claro.<br /><span>De punta a punta.</span></h2>
+          <p>
+            República del Trapo es un emprendimiento argentino en etapa de lanzamiento,
+            creado para vender papeles con unidad, marca, calidad y precio bien explicados.
+            Atendemos cada pedido directamente y confirmamos todo antes de cobrar.
+          </p>
+          <div className="trust-signature">
+            <b>REPÚBLICA DEL TRAPO</b>
+            <span>Del barrio para todo el país</span>
+          </div>
+        </header>
+        <div className="trust-policies">
+          <article>
+            <i>✓</i>
+            <small>01 · STOCK Y PAGO</small>
+            <h3>Primero confirmamos.</h3>
+            <p>
+              Revisamos stock, entrega y total antes del pago. Si algo falta, te avisamos;
+              nunca reemplazamos un producto sin tu aprobación.
+            </p>
+          </article>
+          <article>
+            <i>➜</i>
+            <small>02 · ENTREGA</small>
+            <h3>Sabés cómo llega.</h3>
+            <p>
+              Envíos por zonas en CABA, retiro sin cargo cerca de Quesada y Cabildo, o
+              despacho por correo y transporte para el resto del país.
+            </p>
+          </article>
+          <article>
+            <i>↺</i>
+            <small>03 · CAMBIOS</small>
+            <h3>Lo revisamos con vos.</h3>
+            <p>
+              Escribinos con el número de pedido. Si el producto ya fue entregado, debe
+              conservarse cerrado y sin uso para poder evaluar el cambio.
+            </p>
+          </article>
+          <article>
+            <i>●</i>
+            <small>04 · PRIVACIDAD</small>
+            <h3>Tus datos son tuyos.</h3>
+            <p>
+              Usamos nombre, teléfono y domicilio solamente para coordinar la compra y la
+              entrega. No vendemos ni compartimos tus datos con fines publicitarios.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section className="reviews shell" id="opiniones">
         <header className="reviews-heading">
           <p className="eyebrow">La voz del barrio</p>
@@ -1702,7 +1909,7 @@ export default function Home() {
             decoding="async"
           />
         </a>
-        <p>Todo para que la mugre pierda.</p>
+        <p><a href="#confianza">Quiénes somos y cómo cuidamos tu compra</a></p>
         <a href={wa("¡Hola! Quiero hacer un pedido.")} target="_blank" rel="noreferrer">11 5794-3584</a>
       </footer>
 
@@ -1753,6 +1960,9 @@ export default function Home() {
                   </button>
                   <button type="button" onClick={() => showBotView("comercio")}>
                     <i>▦</i><span><b>Comercio u oficina</b><small>Según el movimiento</small></span><em>→</em>
+                  </button>
+                  <button type="button" onClick={() => showBotView("presupuesto")}>
+                    <i>$</i><span><b>Tengo un presupuesto</b><small>Te armo algo sin pasarte</small></span><em>→</em>
                   </button>
                   <button type="button" onClick={() => showBotView("envios")}>
                     <i>➜</i><span><b>Envíos y retiro</b><small>Zonas, costos y mínimo</small></span><em>→</em>
@@ -1811,6 +2021,85 @@ export default function Home() {
                       );
                     })}
                 </div>
+              </>
+            )}
+
+            {botView === "presupuesto" && (
+              <>
+                <div className="bot-message">
+                  <p>Decime hasta cuánto querés gastar 💰</p>
+                  <span>
+                    Te propongo el armado que mejor aprovecha ese monto con los precios y
+                    descuentos actuales. Después podés cambiar cualquier cantidad.
+                  </span>
+                </div>
+                <div className="bot-budget-picker">
+                  <p className="bot-question">Tu presupuesto</p>
+                  <div>
+                    {budgetOptions.map((budget) => (
+                      <button
+                        className={botBudget === budget ? "selected" : ""}
+                        type="button"
+                        key={budget}
+                        onClick={() => setBotBudget(budget)}
+                      >
+                        {money(budget)}
+                      </button>
+                    ))}
+                  </div>
+                  <label>
+                    <span>Elegí entre {money(15_000)} y {money(45_000)}</span>
+                    <input
+                      type="range"
+                      min="15000"
+                      max="45000"
+                      step="5000"
+                      value={botBudget}
+                      onChange={(event) => setBotBudget(Number(event.target.value))}
+                    />
+                  </label>
+                </div>
+                <article className="bot-recommendation bot-budget-card">
+                  <small>ARMADO PARA {money(botBudget)}</small>
+                  <h3>{budgetRecommendation.name}</h3>
+                  <p>{budgetRecommendation.description}</p>
+                  <ul>
+                    {budgetRecommendation.items.map((item) => (
+                      <li key={item.name}><b>{item.quantity}×</b> {item.name}</li>
+                    ))}
+                  </ul>
+                  <div className="bot-budget-balance">
+                    <span>
+                      <small>Total estimado</small>
+                      <strong>{money(budgetRecommendationPrice)}</strong>
+                    </span>
+                    <span>
+                      <small>Te queda</small>
+                      <strong>{money(budgetRemaining)}</strong>
+                    </span>
+                  </div>
+                  <button
+                    className="bot-budget-add"
+                    type="button"
+                    onClick={() => addBotRecommendation(budgetRecommendation)}
+                  >
+                    Sumar este armado al carrito ＋
+                  </button>
+                  <p
+                    className={
+                      budgetRecommendationPrice >= minimumHomeDeliveryOrder
+                        ? "bot-minimum-note complete"
+                        : "bot-minimum-note"
+                    }
+                  >
+                    {budgetRecommendationPrice >= minimumHomeDeliveryOrder
+                      ? "Ya alcanza el mínimo para envío CABA"
+                      : `Para envío CABA faltan ${money(minimumHomeDeliveryOrder - budgetRecommendationPrice)} · retiro sin mínimo`}
+                  </p>
+                  <small className="bot-budget-rule">
+                    El cálculo ya contempla el descuento por cantidad cuando corresponde.
+                  </small>
+                </article>
               </>
             )}
 
@@ -1991,6 +2280,12 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="drawer-total">
+                  {sharedCartLoaded && (
+                    <div className="shared-cart-notice">
+                      <b>Pedido compartido cargado</b>
+                      <span>Podés cambiar cantidades, sacar productos o seguir comprando.</span>
+                    </div>
+                  )}
                   {cartOpportunity && (
                     <div className={cartOpportunity.remaining ? "discount-meter cart-meter" : "discount-meter cart-meter complete"}>
                       <div>
@@ -2027,6 +2322,14 @@ export default function Home() {
                     Aplicamos automáticamente la mejor promoción. El envío se elige y calcula
                     en el siguiente paso.
                   </p>
+                  <button className="cart-share-button" type="button" onClick={shareCart}>
+                    <span>↗</span>
+                    {cartShareStatus === "copied"
+                      ? "Enlace copiado"
+                      : cartShareStatus === "shared"
+                        ? "Carrito compartido"
+                        : "Compartir este carrito"}
+                  </button>
                   <button className="checkout-button" type="button" onClick={beginCheckout}>
                     Continuar con la compra <span>→</span>
                   </button>
