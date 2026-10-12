@@ -1,4 +1,4 @@
-const CACHE='reto60-v1.4-focus';
+const CACHE='reto60-v1.4.1-focus-fix';
 const FILES=['./','./index.html','./manifest.webmanifest','./playful-v2.css','./rewards-v13.css','./focus-v14.css','./assets/icon-192.png','./assets/icon-512.png','./assets/icon.svg','./privacidad.html','./terminos.html'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
