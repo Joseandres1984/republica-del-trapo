@@ -378,7 +378,7 @@ function answer(index){
   const yes=index===q.correctIndex;
   if(game.mode==='focus'){
     game.locked=true;
-    const buttons=$('#answers button'),msg=$('#game-feedback');
+    const buttons=$$('#answers button'),msg=$('#game-feedback');
     if(!yes){
       const chosen=buttons[index];
       if(chosen){chosen.classList.add('wrong');chosen.disabled=true;}
