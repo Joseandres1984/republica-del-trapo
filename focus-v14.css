@@ -1,0 +1,31 @@
+/* Misión Foco · tareas breves y sin cuenta regresiva. */
+.mode.focus-mode{grid-column:1/-1;min-height:112px;display:flex;flex-direction:row;align-items:center;gap:18px;border:1.5px solid #9edee3;background:linear-gradient(120deg,#194e58,#254c66 58%,#3b3464);padding:21px 24px}
+.mode.focus-mode .m-icon{margin:0;flex:0 0 64px;width:64px;height:64px;background:#c5f7e7;border:2px solid #eafff4;border-radius:21px;font-size:34px}
+.mode.focus-mode .focus-copy{display:flex;flex-direction:column;gap:4px;padding-right:26px}
+.mode.focus-mode strong{font-size:20px;color:#fff}
+.mode.focus-mode small{color:#f1fffa;font-size:13px}
+.mode.focus-mode .arrow{top:calc(50% - 10px)}
+.focus-disclaimer{font-size:11px;line-height:1.6;color:#c1d8e0;margin:10px 0 0;max-width:670px}
+#focus-hint[hidden]{display:none!important}
+#focus-hint{margin:4px 0 19px;padding:18px 20px;border-radius:18px;background:#21424c;border:1px solid #7bcbcf;color:#edfffd;line-height:1.55;font-size:14px}
+#focus-hint strong{display:block;margin-bottom:5px;font-size:16px;color:#fff}
+.focus-mode-active .game-progress{height:9px;background:#334c53}
+.focus-mode-active .game-progress>div{background:linear-gradient(90deg,#94dfb5,#9fcfea)}
+.focus-mode-active .timer-box{display:none!important}
+.focus-mode-active .play-stats{display:none!important}
+.focus-mode-active .question-card{background:#21414b;border-color:#9bdbd4;box-shadow:none;min-height:165px}
+.focus-mode-active .question-card h2{font-size:clamp(24px,5vw,34px);line-height:1.4}
+.focus-mode-active .question-kind{color:#1b4645;background:#c7f5e8}
+.focus-mode-active .answer,.focus-mode-active .answer:nth-child(n){background:#1f414d;color:#fff;border:2px solid #7cbdc1;min-height:91px;font-size:18px;line-height:1.4;justify-content:center;text-align:center;box-shadow:none;transition:none;animation:none!important}
+.focus-mode-active .answer:hover:not(:disabled){background:#315565;border-color:#ccfff0;transform:none;filter:none}
+.focus-mode-active .answer:focus-visible{outline:3px solid #ffeaa7;outline-offset:3px}
+.focus-mode-active .answer.correct{background:#2b604f!important;border-color:#b2ffce!important}
+.focus-mode-active .answer.wrong{background:#425968!important;border-color:#a4d2e7!important}
+.focus-mode-active .game-bottom{justify-content:center}
+.focus-mode-active .text-btn{border:1px solid #8bbec1;border-radius:12px;padding:13px 16px;background:#244651;color:#fff;min-height:46px}
+.focus-mode-active .feedback,.focus-mode-active .feedback.bad{color:#d0ffe0;font-size:14px;text-shadow:none}
+#screen-result.focus-result .score-box{background:linear-gradient(130deg,#204f58,#354368);box-shadow:none;border-color:#a5d7ce}
+#screen-result.focus-result .trophy{animation:none}
+#screen-result.focus-result .score-box .big{background:linear-gradient(90deg,#b7f7c8,#b7d7ff);background-clip:text;color:transparent}
+@media(max-width:740px){.mode.focus-mode{min-height:119px;padding:16px;gap:13px}.mode.focus-mode .m-icon{flex-basis:54px;width:54px;height:54px;font-size:31px}.mode.focus-mode strong{font-size:17px}.mode.focus-mode small{font-size:12px}.focus-mode-active .answer,.focus-mode-active .answer:nth-child(n){min-height:84px;font-size:16px;padding:12px}}
+@media(max-width:390px){.mode.focus-mode{padding:12px}.mode.focus-mode .m-icon{width:48px;height:48px;flex-basis:48px}.mode.focus-mode small{font-size:11px}.focus-mode-active .answer,.focus-mode-active .answer:nth-child(n){font-size:14px}}
