@@ -1,0 +1,27 @@
+/* RETO 60 v1.3 — recompensas, celebración y microinteracciones */
+.reward-shelf{margin:0 0 27px;padding:17px 19px 18px;background:linear-gradient(115deg,#603e8a,#3a397c 55%,#226575);border:1px solid #ffe39a9c;border-radius:21px;box-shadow:0 12px 32px #140b323d}
+.reward-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.reward-head strong{font-size:17px}.reward-head small{color:#fbe3b4;font-size:12px}
+.reward-help{font-size:12px;line-height:1.55;color:#f5e6fb;margin:7px 0 0}
+.reward-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.reward-chip{display:inline-flex;align-items:center;gap:7px;background:#241a41bf;border:1px solid #edd4ff8c;color:#fff;min-height:39px;padding:9px 12px;border-radius:13px;font-size:12px;font-weight:800}
+.reward-chip .reward-emoji{font-size:21px;line-height:1}
+.reward-chip.is-new{background:#61336e;border-color:#ffef9d;box-shadow:0 0 20px #ffd0734a}
+.reward-empty{font-size:12px;color:#f1dcff}
+.result-rewards{margin:17px 0 21px;padding:18px;border:1px solid #eac5ff86;border-radius:19px;background:linear-gradient(135deg,#4c3266,#253a65);text-align:left}
+.result-rewards h3{margin:0 0 6px;font-size:17px;color:#fff}
+.result-rewards p{margin:0;color:#e5d4f7;font-size:12px;line-height:1.5}
+.result-rewards .reward-chips{margin-top:13px}
+#result-score.score-bounce{animation:score-bounce .45s cubic-bezier(.2,.9,.3,1.24)}
+@keyframes score-bounce{0%{transform:scale(.88)}52%{transform:scale(1.08)}100%{transform:scale(1)}}
+.answer.correct,.answer.wrong{animation:answer-pop .26s ease-out}
+@keyframes answer-pop{0%{transform:scale(1)}45%{transform:scale(1.025)}100%{transform:scale(1)}}
+.feedback{font-size:15px;line-height:1.35;text-shadow:0 3px 12px #040512}
+.fx-layer{position:fixed;z-index:60;inset:0;overflow:hidden;pointer-events:none}
+.fx-bit{position:absolute;top:-30px;width:11px;height:17px;border-radius:3px;opacity:0;animation:fx-drop var(--dur,1.4s) cubic-bezier(.2,.68,.65,.99) var(--delay,0s) forwards;transform:translate3d(0,0,0) rotate(0deg)}
+.fx-bit.round{border-radius:50%;width:9px;height:9px}
+@keyframes fx-drop{0%{opacity:0;transform:translate3d(0,-12vh,0) rotate(0)}10%{opacity:1}85%{opacity:.95}100%{opacity:0;transform:translate3d(var(--drift,0px),105vh,0) rotate(var(--rotate,620deg))}}
+.result .trophy{animation:trophy-pop .75s cubic-bezier(.18,.8,.2,1.2)}
+@keyframes trophy-pop{0%{opacity:0;transform:translateY(-17px) scale(.72)}65%{transform:translateY(4px) scale(1.13)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:480px){.reward-shelf{padding:14px;margin-bottom:21px}.reward-head strong{font-size:15px}.reward-chip{font-size:11px;padding:8px 10px;min-height:38px}.result-rewards{padding:15px}.feedback{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.fx-layer{display:none!important}.fx-bit,.result .trophy,#result-score.score-bounce,.answer.correct,.answer.wrong{animation:none!important}}
