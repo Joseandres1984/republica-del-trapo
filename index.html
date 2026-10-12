@@ -446,7 +446,7 @@ function finish(){
   $('#result-combo').textContent=String(game.maxStreak);
   $('#result-accuracy').textContent=(game.correct+game.missed?Math.round(game.correct/(game.correct+game.missed)*100):0)+'%';
   $('#result-sub').textContent=game.mode==='focus'?'Completaste 8 pasos a tu ritmo. No hay apuro ni resultados buenos o malos. ¡Gracias por jugar!':game.daily?'Completaste el reto de hoy. ¿Podés superar esta puntuación?':'Un minuto, muchas decisiones. ¿Te animás a una revancha?';
-  if(game.challengeGoal!==null){
+  if(game.challengeGoal!==null&&game.mode!=='focus'){
     const won=game.score>game.challengeGoal;
     $('#result-sub').textContent=won?`¡Superaste la marca de ${game.challengeGoal.toLocaleString('es-AR')} puntos! Compartí tu revancha.`:`La marca a superar era ${game.challengeGoal.toLocaleString('es-AR')} puntos. ¡Probá de nuevo!`;
   }
