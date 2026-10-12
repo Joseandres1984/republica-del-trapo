@@ -1,7 +1,7 @@
 {
   "name": "RETO 60 — ¡Un minuto de diversión!",
   "short_name": "RETO 60",
-  "description": "Seis modos de juego para divertirte, aprender y desafiar a tus amigos en 60 segundos.",
+  "description": "Siete modos: desafíos de 60 segundos y Misión Foco sin reloj, a tu ritmo.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
