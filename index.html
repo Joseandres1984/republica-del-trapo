@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="index,follow"><meta name="color-scheme" content="dark">
-<meta property="og:type" content="website"><meta property="og:site_name" content="RETO 60"><meta property="og:title" content="RETO 60 — ¿Podés superar mi marca?"><meta property="og:description" content="Cinco juegos mentales y solo 60 segundos. Desafiá a tus amigos y superá el récord."><meta property="og:image" content="https://reto60-beta.onrender.com/assets/icon-512.png"><meta property="og:url" content="https://reto60-beta.onrender.com/"><meta property="og:locale" content="es_AR"><meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#110b29"><meta name="description" content="RETO 60. Cinco juegos mentales, sesenta segundos. Desafiá tu mente, superá tu récord y compartilo.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="RETO 60"><meta property="og:title" content="RETO 60 — ¿Podés superar mi marca?"><meta property="og:description" content="Siete modos de juego y una Misión Foco sin reloj. Elegí tu desafío y divertite a tu ritmo."><meta property="og:image" content="https://reto60-beta.onrender.com/assets/icon-512.png"><meta property="og:url" content="https://reto60-beta.onrender.com/"><meta property="og:locale" content="es_AR"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#110b29"><meta name="description" content="RETO 60: trivia, memoria, lógica y Misión Foco sin cronómetro. Jugá gratis y a tu ritmo.">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="canonical" href="https://reto60-beta.onrender.com/"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./assets/icon-192.png">
 <title>RETO 60 — ¡Un minuto de diversión!</title>
@@ -25,11 +25,11 @@
  </header>
  <main>
   <section id="screen-home" class="screen">
-   <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí tu juego favorito, sumá puntos y desafiá a tus amigos. ¡Es gratis, divertido y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 5 JUEGOS</div></div></div>
+   <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí tu juego favorito, sumá puntos y desafiá a tus amigos. ¡Es gratis, divertido y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 7 MODOS</div></div></div>
    <div class="challenge" id="challenge-banner" hidden><div><div class="eyebrow">🔥 ¡TE DESAFIARON!</div><h3>¿Podés superar <strong id="challenge-goal">0</strong> puntos?</h3><p>Jugá 60 segundos con las mismas preguntas y compartí tu resultado.</p></div><button id="challenge-play" class="primary-btn">🎯 ¡Acepto!</button></div>
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
 <section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/7 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
-   <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>¡Todos duran 1 minuto!</p></div>
+   <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>Misión Foco: sin reloj</p></div>
    <div class="modes">
     <button class="mode featured" data-mode="mix"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🎲</span><strong>Modo mixto</strong><small>Un poquito de todo</small></button>
     <button class="mode" data-mode="quiz"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🧠</span><strong>Trivia</strong><small>Preguntas curiosas</small></button>
@@ -464,8 +464,9 @@ function closeOverlays(){$$('.overlay').forEach(el=>el.hidden=true);}
 function exitGame(){clearGameTimers();if(game)game.ended=true;game=null;updateHome();show('home');}
 function shareText(){
   const link=shareUrl();
-  if(!game?.ended)return `⚡ RETO 60 ⚡\n¿Te animás a jugar 60 segundos de trivia, lógica y memoria?\nDesafío gratis: ${link||'RETO 60: 5 juegos, 60 segundos.'}`;
-  return `⚡ RETO 60 ⚡\nHice ${game.score.toLocaleString('es-AR')} puntos en 60 segundos.\n¿Podés superar mi marca?\n${link||'RETO 60: 5 juegos, 60 segundos.'}`;
+  if(game?.mode==='focus')return `🌿 MISIÓN FOCO · RETO 60 🌿\nCompleté ${game.correct} pasos de 8, sin reloj y a mi ritmo. ¿Querés probar?\n${link||'RETO 60: Misión Foco'}`;
+  if(!game?.ended)return `⚡ RETO 60 ⚡\n¿Te animás a jugar trivia, lógica, memoria y más?\nJugá gratis: ${link||'RETO 60: 7 modos para elegir.'}`;
+  return `⚡ RETO 60 ⚡\nHice ${game.score.toLocaleString('es-AR')} puntos en 60 segundos.\n¿Podés superar mi marca?\n${link||'RETO 60: 7 modos para elegir.'}`;
 }
 async function share(){
   const data={title:'RETO 60',text:shareText()};
@@ -547,7 +548,13 @@ $$('.overlay').forEach(overlay=>overlay.addEventListener('click',ev=>{if(ev.targ
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 updateHome();
 if(receivedChallenge){
-  $('#challenge-goal').textContent=receivedChallenge.goal.toLocaleString('es-AR');
+  if(receivedChallenge.mode==='focus'){
+    $('#challenge-banner').querySelector('h3').textContent='🌿 ¿Te animás a jugar Misión Foco?';
+    $('#challenge-banner').querySelector('p').textContent='Ocho pasos sin reloj, a tu ritmo. Podés repetir o pasar cualquier misión.';
+    $('#challenge-play').textContent='🌿 Empezar a mi ritmo';
+  }else{
+    $('#challenge-goal').textContent=receivedChallenge.goal.toLocaleString('es-AR');
+  }
   $('#challenge-banner').hidden=false;
 }
 persist();show('home');
