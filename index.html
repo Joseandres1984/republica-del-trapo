@@ -40,6 +40,7 @@
     <button class="mode focus-mode" data-mode="focus" aria-label="Misión Foco, pensado para personas con TDAH y para quienes prefieren jugar sin reloj, 8 pasos sin cronómetro"><span class="arrow">→</span><span class="m-icon" aria-hidden="true">🎯</span><span class="focus-copy"><strong>Misión Foco 🌿</strong><small>🧠 Pensado para personas con TDAH. 8 mini-misiones sin reloj, a tu ritmo.</small></span></button>
    </div>
    <p class="focus-disclaimer">💚 Un espacio de juego pensado para personas con TDAH y también para cualquiera que prefiera menos estímulos, sin reloj ni presión. Es recreativo: no diagnostica ni trata el TDAH.</p>
+   <div class="focus-share"><button type="button" id="share-focus" class="small-btn">💌 Compartir Misión Foco</button><span>Invitá a jugar las 8 mini-misiones sin cronómetro.</span></div>
    <div class="daily"><div><div class="eyebrow">🎁 RETO DEL DÍA</div><h3>¡Un desafío nuevo cada día!</h3><p id="daily-status">Volvé mañana por otro desafío. ¡Siempre hay algo nuevo!</p></div><button id="daily-btn" class="small-btn">🎯 Jugar hoy</button></div>
 <div class="install-cta"><span>¿Querés jugar en cualquier momento? Agregá RETO 60 a la pantalla de inicio.</span><button id="install-btn" class="small-btn">📲 Instalar juego</button></div>
    <footer class="footer"><span>RETO 60 · Versión de prueba · Todos los resultados se guardan en este dispositivo.</span><span><a href="./privacidad.html">Privacidad</a> · <a href="./terminos.html">Condiciones</a></span><span>Sin anuncios. Sin cuentas. Sin conexión obligatoria después de instalar.</span></footer>
@@ -231,6 +232,7 @@ function readChallenge(){
   }catch{return null;}
 }
 const receivedChallenge=readChallenge();
+const focusInvite=!receivedChallenge&&new URLSearchParams(location.search).get("juego")==="focus";
 function shareUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const url=new URL(location.pathname,location.origin);
@@ -468,8 +470,8 @@ function shareText(){
   if(!game?.ended)return `⚡ RETO 60 ⚡\n¿Te animás a jugar trivia, lógica, memoria y más?\nJugá gratis: ${link||'RETO 60: 7 modos para elegir.'}`;
   return `⚡ RETO 60 ⚡\nHice ${game.score.toLocaleString('es-AR')} puntos en 60 segundos.\n¿Podés superar mi marca?\n${link||'RETO 60: 7 modos para elegir.'}`;
 }
-async function share(){
-  const data={title:'RETO 60',text:shareText()};
+async function share(messageOverride){
+  const data={title:'RETO 60',text:typeof messageOverride==="string"?messageOverride:shareText()};
   try{
     if(navigator.share){await navigator.share(data);store.metrics.shared++;persist();return;}
     if(navigator.clipboard&&/^https?:$/.test(location.protocol)){
@@ -515,8 +517,13 @@ function exportStats(){
   a.href=url;a.download='reto60-mis-estadisticas.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 $('#hero-play').addEventListener('click',()=>begin('mix'));
-$('#challenge-play').addEventListener('click',()=>begin(receivedChallenge.mode,false,receivedChallenge));
+$('#challenge-play').addEventListener('click',()=>receivedChallenge?begin(receivedChallenge.mode,false,receivedChallenge):begin('focus'));
 $('#share-home').addEventListener('click',share);
+$('#share-focus').addEventListener('click',()=>{
+  const url=new URL(location.pathname,location.origin);
+  url.searchParams.set('juego','focus');
+  share('🌿 Misión Foco — RETO 60\nOcho mini-misiones sin cronómetro, pensadas para personas con TDAH y para quien prefiera jugar sin apuro. Es gratis. ¿Querés probar?\n'+url.toString());
+});
 $('#stats-open').addEventListener('click',showMetrics);
 $('#install-btn').addEventListener('click',installApp);
 $('#install-close').addEventListener('click',closeOverlays);
@@ -549,12 +556,19 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addE
 updateHome();
 if(receivedChallenge){
   if(receivedChallenge.mode==='focus'){
+    $('#challenge-banner').querySelector('.eyebrow').textContent='🌿 INVITACIÓN A MISIÓN FOCO';
     $('#challenge-banner').querySelector('h3').textContent='🌿 ¿Te animás a jugar Misión Foco?';
     $('#challenge-banner').querySelector('p').textContent='Ocho pasos sin reloj, a tu ritmo. Podés repetir o pasar cualquier misión.';
     $('#challenge-play').textContent='🌿 Empezar a mi ritmo';
   }else{
     $('#challenge-goal').textContent=receivedChallenge.goal.toLocaleString('es-AR');
   }
+  $('#challenge-banner').hidden=false;
+}else if(focusInvite){
+  $('#challenge-banner').querySelector('.eyebrow').textContent='🌿 JUEGO SIN RELOJ';
+  $('#challenge-banner').querySelector('h3').textContent='Misión Foco: a tu ritmo';
+  $('#challenge-banner').querySelector('p').textContent='Ocho mini-misiones pensadas para jugar con calma. Sin presión ni puntos negativos.';
+  $('#challenge-play').textContent='🌿 Empezar Misión Foco';
   $('#challenge-banner').hidden=false;
 }
 persist();show('home');
