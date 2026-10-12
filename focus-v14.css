@@ -29,3 +29,10 @@
 #screen-result.focus-result .score-box .big{background:linear-gradient(90deg,#b7f7c8,#b7d7ff);background-clip:text;color:transparent}
 @media(max-width:740px){.mode.focus-mode{min-height:119px;padding:16px;gap:13px}.mode.focus-mode .m-icon{flex-basis:54px;width:54px;height:54px;font-size:31px}.mode.focus-mode strong{font-size:17px}.mode.focus-mode small{font-size:12px}.focus-mode-active .answer,.focus-mode-active .answer:nth-child(n){min-height:84px;font-size:16px;padding:12px}}
 @media(max-width:390px){.mode.focus-mode{padding:12px}.mode.focus-mode .m-icon{width:48px;height:48px;flex-basis:48px}.mode.focus-mode small{font-size:11px}.focus-mode-active .answer,.focus-mode-active .answer:nth-child(n){font-size:14px}}
+
+/* Invitaciones directas para Misión Foco */
+.focus-share{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-2px 0 22px}
+.focus-share .small-btn{background:#245962;border-color:#9bded5;color:#f5fffb;font-size:13px;min-height:45px}
+.focus-share .small-btn:hover{background:#356d75}
+.focus-share span{font-size:12px;line-height:1.4;color:#d2d8e9}
+@media(max-width:430px){.focus-share{display:grid;grid-template-columns:1fr}.focus-share .small-btn{width:100%}.focus-share span{text-align:center}}
