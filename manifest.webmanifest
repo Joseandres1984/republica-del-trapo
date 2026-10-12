@@ -1,12 +1,12 @@
 {
-  "name": "RETO 60 — Desafiá tu mente",
+  "name": "RETO 60 — ¡Un minuto de diversión!",
   "short_name": "RETO 60",
-  "description": "Cinco minijuegos mentales. Sesenta segundos. Tu mejor récord.",
+  "description": "Seis modos de juego para divertirte, aprender y desafiar a tus amigos en 60 segundos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#080a18",
-  "theme_color": "#080a18",
+  "background_color": "#110b29",
+  "theme_color": "#110b29",
   "lang": "es-AR",
   "icons": [
     {
