@@ -14,6 +14,7 @@
 .challenge[hidden]{display:none!important}.challenge{margin:5px 0 24px;padding:18px 22px;border-radius:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;background:linear-gradient(110deg,#312458,#182642);border:1px solid #b18bff99;box-shadow:0 10px 45px #30206155}.challenge h3{margin:7px 0 5px;font-size:20px}.challenge p{color:#c6c7e3;font-size:13px;margin:0}.challenge strong{color:#79ede3}.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0 21px}.metrics-grid>div{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#12162c}.metrics-grid strong{display:block;font-size:21px;color:var(--cyan)}.metrics-grid small{display:block;color:#a9adc7;font-size:11px;line-height:1.35}@media(max-width:740px){.challenge{flex-direction:column;align-items:stretch}.challenge .primary-btn{width:100%}}.dialog{max-height:95dvh;overflow-y:auto}button,.primary-btn,.secondary-btn{touch-action:manipulation}
 .install-cta{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:17px 20px;margin-top:18px;border-radius:17px;border:1px solid #ffffff1f;background:#13192b;color:#c3cbe6;font-size:13px}.install-cta button{white-space:nowrap}@media(max-width:740px){.hero-actions{display:grid;grid-template-columns:1fr 1fr}.hero-actions>*{width:100%;padding:13px 10px}.hero-actions>:last-child{grid-column:1/-1}.install-cta{flex-direction:column;align-items:stretch}.install-cta button{width:100%}}</style>
 <link rel="stylesheet" href="./playful-v2.css">
+<link rel="stylesheet" href="./rewards-v13.css">
 </head>
 <body>
 <div class="app-shell">
@@ -26,6 +27,7 @@
    <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí tu juego favorito, sumá puntos y desafiá a tus amigos. ¡Es gratis, divertido y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 5 JUEGOS</div></div></div>
    <div class="challenge" id="challenge-banner" hidden><div><div class="eyebrow">🔥 ¡TE DESAFIARON!</div><h3>¿Podés superar <strong id="challenge-goal">0</strong> puntos?</h3><p>Jugá 60 segundos con las mismas preguntas y compartí tu resultado.</p></div><button id="challenge-play" class="primary-btn">🎯 ¡Acepto!</button></div>
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
+<section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/7 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
    <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>¡Todos duran 1 minuto!</p></div>
    <div class="modes">
     <button class="mode featured" data-mode="mix"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🎲</span><strong>Modo mixto</strong><small>Un poquito de todo</small></button>
@@ -50,7 +52,7 @@
    </div>
   </section>
   <section id="screen-result" class="screen" hidden>
-   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
+   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><section id="result-rewards" class="result-rewards" aria-label="Medallas de la partida"><h3 id="result-rewards-title">🏅 Tus medallas</h3><p id="result-rewards-note">¡Seguí jugando para sumar premios!</p><div id="result-rewards-chips" class="reward-chips"></div></section><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
   </section>
  </main>
 </div>
@@ -188,6 +190,7 @@ const $=(s)=>document.querySelector(s);
 const $$=(s)=>Array.from(document.querySelectorAll(s));
 const defaults={games:0,best:0,totalCorrect:0,lastPlayed:'',days:0,scores:[],sound:true,name:'Jugador',dailyBest:{},metrics:{opens:0,starts:0,completed:0,shared:0,visits:[]}};
 const store=(()=>{try{const raw=JSON.parse(localStorage.getItem('reto60-v1')||'null');return raw&&typeof raw==='object'?{...defaults,...raw}:structuredClone(defaults);}catch{return structuredClone(defaults);}})();
+if(!Array.isArray(store.badges))store.badges=[];
 function persist(){try{localStorage.setItem('reto60-v1',JSON.stringify(store));}catch{/*modo privado*/}}
 // Los datos de uso se guardan solo en este dispositivo y nunca se transmiten.
 store.metrics={opens:0,starts:0,completed:0,shared:0,visits:[],...(store.metrics||{})};
@@ -213,11 +216,70 @@ function shareUrl(){
 
 let game=null, tickId=null, actionId=null, revealId=null, toastId=null;
 let audioCtx=null;
-function tone(good=true){if(!store.sound)return;try{audioCtx??=new (window.AudioContext||window.webkitAudioContext)();const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sine';osc.frequency.setValueAtTime(good?650:220,audioCtx.currentTime);osc.frequency.exponentialRampToValueAtTime(good?960:155,audioCtx.currentTime+.1);gain.gain.setValueAtTime(.055,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.15);osc.connect(gain).connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+.16);}catch{}}
+function tone(good=true,flavor='answer'){
+  if(!store.sound)return;
+  try{
+    audioCtx??=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+    const notes=flavor==='record'?[ [523,.00,.15],[659,.10,.16],[784,.20,.16],[1046,.32,.30] ]:
+      flavor==='start'?[ [523,.00,.11],[659,.12,.13] ]:
+      good?[ [659,.00,.095],[880,.075,.13] ]:[ [260,.00,.13],[197,.10,.15] ];
+    for(const [hz,delay,dur] of notes){
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),at=audioCtx.currentTime+delay;
+      osc.type=good?'sine':'triangle';osc.frequency.setValueAtTime(hz,at);
+      gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(good?.055:.028,at+.016);
+      gain.gain.exponentialRampToValueAtTime(.0001,at+dur);
+      osc.connect(gain).connect(audioCtx.destination);osc.start(at);osc.stop(at+dur+.02);
+    }
+  }catch{/* navegador sin audio o con sonido bloqueado */}
+}
+const MEDALS=[
+  {id:'first',emoji:'🎮',name:'¡Primer reto!',test:()=>store.games>=1},
+  {id:'points',emoji:'🌟',name:'500 puntos',test:()=>game.score>=500},
+  {id:'expert',emoji:'🚀',name:'1.200 puntos',test:()=>game.score>=1200},
+  {id:'combo',emoji:'🔥',name:'Racha de 3',test:()=>game.maxStreak>=3},
+  {id:'smart',emoji:'🧠',name:'8 aciertos',test:()=>game.correct>=8},
+  {id:'daily',emoji:'☀️',name:'Reto diario',test:()=>game.daily},
+  {id:'return',emoji:'💖',name:'3 días seguidos',test:()=>store.days>=3}
+];
+function medalChip(reward,fresh=false){
+  return '<span class="reward-chip'+(fresh?' is-new':'')+'"><span class="reward-emoji" aria-hidden="true">'+reward.emoji+'</span>'+reward.name+(fresh?' ✨':'')+'</span>';
+}
+function renderMedals(newIds=[]){
+  const known=MEDALS.filter(reward=>store.badges.includes(reward.id));
+  $('#reward-count').textContent=known.length+'/'+MEDALS.length+' conseguidas';
+  $('#reward-shelf-chips').innerHTML=known.length?known.map(reward=>medalChip(reward)).join(''):'<span class="reward-empty">🎁 Tu primera medalla está por llegar.</span>';
+  $('#result-rewards-title').textContent=newIds.length?'🎊 ¡'+(newIds.length===1?'Nueva medalla!':'Nuevas medallas!'):'🏅 Tu colección';
+  $('#result-rewards-note').textContent=newIds.length?'¡Las ganaste jugando! Quedan guardadas en este dispositivo.':'¡Seguí jugando y desbloqueá más!';
+  $('#result-rewards-chips').innerHTML=known.length?known.map(reward=>medalChip(reward,newIds.includes(reward.id))).join(''):'<span class="reward-empty">¡Tu próximo reto trae premios!</span>';
+}
+function unlockMedals(){
+  const fresh=[];
+  for(const reward of MEDALS){if(!store.badges.includes(reward.id)&&reward.test()){store.badges.push(reward.id);fresh.push(reward.id);}}
+  return fresh;
+}
+function confetti(big=false){
+  if(document.hidden||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const layer=document.createElement('div');layer.className='fx-layer';layer.setAttribute('aria-hidden','true');
+  const colors=['#ffcf79','#ff8dbb','#a38aff','#74ece6','#c6ff98','#fff1fc'];
+  for(let i=0;i<(big?54:19);i++){
+    const part=document.createElement('span');part.className='fx-bit'+(i%4===0?' round':'');
+    part.style.left=(Math.random()*100)+'%';
+    part.style.backgroundColor=colors[i%colors.length];
+    part.style.setProperty('--delay',(Math.random()*.32)+'s');
+    part.style.setProperty('--dur',(1.05+Math.random()*.65)+'s');
+    part.style.setProperty('--drift',((Math.random()-.5)*180)+'px');
+    part.style.setProperty('--rotate',(250+Math.random()*740)+'deg');
+    layer.appendChild(part);
+  }
+  document.body.appendChild(layer);setTimeout(()=>layer.remove(),2200);
+}
+
 function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function show(name){$$('.screen').forEach(el=>el.hidden=el.id!==`screen-${name}`);window.scrollTo({top:0,behavior:'instant'});}
 function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastId);toastId=setTimeout(()=>el.hidden=true,2600);}
 function updateHome(){
+  renderMedals();
   $('#stat-best').textContent=Number(store.best||0).toLocaleString('es-AR');
   $('#stat-games').textContent=Number(store.games||0).toLocaleString('es-AR');
   $('#stat-days').textContent=Number(store.days||0);
@@ -236,7 +298,7 @@ function begin(mode='mix',daily=false,challenge=null){
   $('#current-mode').textContent=daily?'RETO DIARIO':({mix:'MODO MIXTO',quiz:'TRIVIA',math:'CÁLCULO',logic:'SECUENCIAS',odd:'DIFERENTE',memory:'MEMORIA'}[mode]);
   $('#play-points').textContent='0';$('#play-streak').textContent='0';$('#play-answered').textContent='0';
   $('#game-feedback').hidden=true;
-  show('play'); nextQuestion();
+  show('play');tone(true,'start');nextQuestion();
   tickId=setInterval(updateClock,70);updateClock();
 }
 function updateClock(){
@@ -290,7 +352,8 @@ function answer(index){
   $('#play-points').textContent=game.score.toLocaleString('es-AR');
   $('#play-streak').textContent=String(game.streak);
   $('#play-answered').textContent=String(game.correct+game.missed);
-  const msg=$('#game-feedback');msg.textContent=yes?`¡Bien! +${scoreFor(true,game.streak-1)} puntos`:'Seguimos. ¡La próxima sale!';msg.className='feedback'+(yes?'':' bad');msg.hidden=false;
+  const msg=$('#game-feedback');msg.textContent=yes?(game.streak>=5?'🚀 ¡Imparable!':game.streak>=3?'🔥 ¡Qué racha!':'🌟 ¡Muy bien!')+` +${scoreFor(true,game.streak-1)} puntos`:'💪 ¡Seguimos! La próxima sale.';msg.className='feedback'+(yes?'':' bad');msg.hidden=false;
+  if(yes&&game.streak%3===0)confetti(false);
   game.questionIndex++;
   actionId=setTimeout(nextQuestion,yes?390:640);
 }
@@ -313,6 +376,7 @@ function finish(){
   for(const date in store.dailyBest){if((Date.now()-new Date(date+'T12:00:00').getTime())>40*86400000)delete store.dailyBest[date];}
   store.scores.unshift({points:game.score,mode:game.daily?'Diario':game.mode,date:today,name:String(store.name||'Jugador').slice(0,25),correct:game.correct});
   store.scores=store.scores.slice(0,50);
+  const newMedals=unlockMedals();
   persist();
   $('#result-header').textContent=isRecord&&game.score>0?'🏆 NUEVO RÉCORD':'🎉 ¡PARTIDA COMPLETADA!';
   $('#result-title').textContent=isRecord&&game.score>0?'¡Increíble marca!':game.score>0?'¡Gran partida!':'¡Volvé a intentarlo!';
@@ -325,7 +389,10 @@ function finish(){
     const won=game.score>game.challengeGoal;
     $('#result-sub').textContent=won?`¡Superaste la marca de ${game.challengeGoal.toLocaleString('es-AR')} puntos! Compartí tu revancha.`:`La marca a superar era ${game.challengeGoal.toLocaleString('es-AR')} puntos. ¡Probá de nuevo!`;
   }
+  renderMedals(newMedals);
   show('result');
+  const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
+  if(isRecord&&game.score>0||newMedals.length){confetti(true);tone(true,'record');}
 }
 function showScores(){
   const list=$('#leader-list'), scores=[...(store.scores||[])].sort((a,b)=>b.points-a.points).slice(0,10);
