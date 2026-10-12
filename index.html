@@ -426,7 +426,7 @@ function finish(){
   store.metrics.completed++;
   store.games=Math.max(0,Number(store.games||0))+1;
   store.totalCorrect=Math.max(0,Number(store.totalCorrect||0))+game.correct;
-  const isRecord=game.score>Number(store.best||0);
+  const isRecord=game.mode!=='focus'&&game.score>Number(store.best||0);
   if(isRecord)store.best=game.score;
   const today=todayLocal();
   if(store.lastPlayed!==today){
