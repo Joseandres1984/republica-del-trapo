@@ -1,7 +1,7 @@
 {
   "name": "RETO 60 — ¡Un minuto de diversión!",
   "short_name": "RETO 60",
-  "description": "Siete modos: desafíos de 60 segundos y Misión Foco sin reloj, a tu ritmo.",
+  "description": "Emoji Pop, Reto 3 diario y juegos de 60 segundos. Incluye Misión Foco sin reloj. Gratis y para compartir.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
