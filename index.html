@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="./focus-v14.css">
 <link rel="stylesheet" href="./sticky-v16.css">
 <link rel="stylesheet" href="./music-v17.css">
+<link rel="stylesheet" href="./rewards-v18.css">
 </head>
 <body>
 <div class="app-shell">
@@ -33,7 +34,21 @@
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
 <section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
    <div class="mini-banner"><div><div class="eyebrow">💎 3 PREGUNTAS PARA HOY</div><h3>¿Lográs el 3 de 3?</h3><p>Emoji + trivia + patrón. Sin reloj, con resultado para compartir.</p><div id="mini-today" class="mini-today">Tu reto de hoy está listo</div></div><button type="button" id="mini-cta" class="small-btn">🚀 ¡Quiero probar!</button></div>
-<section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/9 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
+<section id="reward-shelf" class="reward-shelf" aria-label="Recompensas y niveles">
+ <div class="reward-head"><strong>🎁 Tus recompensas</strong><small id="reward-count">0 medallas</small></div>
+ <p class="reward-help">Subí de nivel jugando a tu ritmo. Guardamos tus logros en este dispositivo.</p>
+ <div class="reward-level-panel">
+  <div class="reward-level-top"><strong id="reward-level-name">🌟 Nivel 1 · Curioso</strong><small id="reward-total-xp">0 XP acumulados</small></div>
+  <div class="reward-level-track" id="reward-level-track" role="progressbar" aria-label="Progreso al siguiente nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="reward-level-fill" class="reward-level-fill"></div></div>
+  <div class="reward-level-bottom"><span id="reward-level-progress">0/100 XP</span><span id="reward-level-next">100 XP para el próximo nivel</span></div>
+ </div>
+ <div class="reward-preview-title">🏅 Medallas conseguidas</div>
+ <div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div>
+ <div class="reward-preview-title">✨ Próximos objetivos</div>
+ <div id="reward-next-badges" class="reward-chips"></div>
+ <div id="reward-next-goal" class="reward-up-next">Completá una partida para ganar tu primera medalla.</div>
+ <p class="reward-note">🎀 Bonus de +10 XP por tu primera partida completada del día. No perdés XP ni medallas si descansás.</p>
+</section>
    <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>Misión Foco: sin reloj</p></div>
    <div class="modes">
     <button class="mode emoji-mode" data-mode="emoji"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">😍</span><strong>Emoji Pop</strong><small>¿Cuál es distinto? ¡Más fácil de entender, imposible!</small></button>
@@ -65,7 +80,15 @@
    </div>
   </section>
   <section id="screen-result" class="screen" hidden>
-   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div id="result-stamps" class="result-stamps" aria-label="Resultado del Reto 3" hidden></div><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><section id="result-rewards" class="result-rewards" aria-label="Medallas de la partida"><h3 id="result-rewards-title">🏅 Tus medallas</h3><p id="result-rewards-note">¡Seguí jugando para sumar premios!</p><div id="result-rewards-chips" class="reward-chips"></div></section><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
+   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div id="result-stamps" class="result-stamps" aria-label="Resultado del Reto 3" hidden></div><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><section id="result-xp" class="reward-result-progress" aria-label="Experiencia ganada">
+  <h3>✨ ¡Cada partida suma!</h3>
+  <div id="result-xp-gain" class="xp-gain">+0 XP</div>
+  <p id="result-xp-bonus"></p>
+  <p id="result-xp-level">Nivel 1 · Curioso</p>
+  <div class="reward-level-track" id="result-xp-track" role="progressbar" aria-label="Experiencia acumulada en el nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="result-xp-fill" class="reward-level-fill"></div></div>
+  <div class="reward-level-bottom"><span id="result-xp-progress">0/100 XP</span><span id="result-xp-next">100 XP para el siguiente nivel</span></div>
+  <p id="result-xp-levelup"></p>
+</section><section id="result-rewards" class="result-rewards" aria-label="Medallas de la partida"><h3 id="result-rewards-title">🏅 Tus medallas</h3><p id="result-rewards-note">¡Seguí jugando para sumar premios!</p><div id="result-rewards-chips" class="reward-chips"></div></section><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
   </section>
  </main>
 </div>
@@ -252,9 +275,18 @@ function scoreFor(correct, streak){ return correct ? 100+Math.min(10,streak)*15 
 'use strict';
 const $=(s)=>document.querySelector(s);
 const $$=(s)=>Array.from(document.querySelectorAll(s));
-const defaults={games:0,best:0,totalCorrect:0,lastPlayed:'',days:0,scores:[],sound:true,music:false,name:'Jugador',dailyBest:{},metrics:{opens:0,starts:0,completed:0,shared:0,visits:[]}};
+const defaults={games:0,best:0,totalCorrect:0,lastPlayed:'',days:0,scores:[],sound:true,music:false,name:'Jugador',dailyBest:{},badges:[],miniBest:{},xp:0,playDays:[],rewardDays:[],modesPlayed:[],metrics:{opens:0,starts:0,completed:0,shared:0,visits:[]}};
 const store=(()=>{try{const raw=JSON.parse(localStorage.getItem('reto60-v1')||'null');return raw&&typeof raw==='object'?{...defaults,...raw}:structuredClone(defaults);}catch{return structuredClone(defaults);}})();
 if(!Array.isArray(store.badges))store.badges=[];
+const pastScores=Array.isArray(store.scores)?store.scores:[];
+const pastDates=[...new Set(pastScores.map(p=>p.date).concat(store.lastPlayed||'').filter(d=>/^\\d{4}-\\d{2}-\\d{2}$/.test(d)))].slice(-100);
+if(!Number.isFinite(store.xp)||store.xp<0){
+  // Conservar una parte del progreso histórico sin alterar puntos ni récords existentes.
+  store.xp=pastScores.reduce((sum,p)=>sum+20+Math.min(50,Math.max(0,Number(p.correct)||0)*5),0);
+}
+if(!Array.isArray(store.playDays))store.playDays=[...pastDates];
+if(!Array.isArray(store.rewardDays))store.rewardDays=[...pastDates];
+if(!Array.isArray(store.modesPlayed))store.modesPlayed=[...new Set(pastScores.map(p=>p.mode==='Diario'?'mix':p.mode).filter(p=>typeof p==='string'&&p.length<30))];
 function persist(){try{localStorage.setItem('reto60-v1',JSON.stringify(store));}catch{/*modo privado*/}}
 // Los datos de uso se guardan solo en este dispositivo y nunca se transmiten.
 store.metrics={opens:0,starts:0,completed:0,shared:0,visits:[],...(store.metrics||{})};
@@ -301,26 +333,62 @@ function tone(good=true,flavor='answer'){
   }catch{/* navegador sin audio o con sonido bloqueado */}
 }
 const MEDALS=[
-  {id:'first',emoji:'🎮',name:'¡Primer reto!',test:()=>store.games>=1},
-  {id:'points',emoji:'🌟',name:'500 puntos',test:()=>game.score>=500},
-  {id:'expert',emoji:'🚀',name:'1.200 puntos',test:()=>game.score>=1200},
-  {id:'combo',emoji:'🔥',name:'Racha de 3',test:()=>game.maxStreak>=3},
-  {id:'smart',emoji:'🧠',name:'8 aciertos',test:()=>game.correct>=8},
-  {id:'daily',emoji:'☀️',name:'Reto diario',test:()=>game.daily},
-  {id:'return',emoji:'💖',name:'3 días seguidos',test:()=>store.days>=3},
-  {id:'focus',emoji:'🌿',name:'Misión Foco',test:()=>game.mode==='focus'&&game.questionIndex>=8},
-  {id:'mini-perfect',emoji:'💎',name:'¡3 de 3!',test:()=>game.mode==='mini'&&game.correct===3}
+  {id:'first',emoji:'🎮',name:'¡Primer reto!',goal:'Terminá una partida',test:()=>store.games>=1},
+  {id:'mini-two',emoji:'🟦',name:'Dos de tres',goal:'Acertá 2 preguntas en Reto 3',test:()=>game.mode==='mini'&&game.correct>=2},
+  {id:'combo',emoji:'🔥',name:'Racha de 3',goal:'Acertá 3 respuestas seguidas',test:()=>game.maxStreak>=3},
+  {id:'points',emoji:'🌟',name:'500 puntos',goal:'Sumá 500 puntos en una partida',test:()=>game.score>=500},
+  {id:'explorer',emoji:'🧭',name:'Explorador',goal:'Probá 3 modos de juego distintos',test:()=>store.modesPlayed.length>=3},
+  {id:'five',emoji:'🎲',name:'Cinco partidas',goal:'Completá 5 partidas',test:()=>store.games>=5},
+  {id:'two-days',emoji:'🌻',name:'Volviste',goal:'Jugá en 2 días diferentes (sin consecutividad)',test:()=>store.playDays.length>=2},
+  {id:'mini-perfect',emoji:'💎',name:'¡3 de 3!',goal:'Acertá las 3 preguntas de Reto 3',test:()=>game.mode==='mini'&&game.correct===3},
+  {id:'emoji-five',emoji:'😍',name:'Experto emoji',goal:'Acertá 5 en una partida de Emoji Pop',test:()=>game.mode==='emoji'&&game.correct>=5},
+  {id:'smart',emoji:'🧠',name:'8 aciertos',goal:'Conseguí 8 aciertos en una partida',test:()=>game.correct>=8},
+  {id:'expert',emoji:'🚀',name:'1.200 puntos',goal:'Sumá 1.200 puntos en una partida',test:()=>game.score>=1200},
+  {id:'ten',emoji:'🏅',name:'Diez partidas',goal:'Completá 10 partidas',test:()=>store.games>=10},
+  {id:'daily',emoji:'☀️',name:'Reto diario',goal:'Completá el desafío diario',test:()=>game.daily},
+  {id:'return',emoji:'💖',name:'3 días seguidos',goal:'Jugá durante 3 días seguidos (opcional)',test:()=>store.days>=3},
+  {id:'focus',emoji:'🌿',name:'Misión Foco',goal:'Completá las 8 misiones a tu ritmo',test:()=>game.mode==='focus'&&game.questionIndex>=8}
 ];
-function medalChip(reward,fresh=false){
-  return '<span class="reward-chip'+(fresh?' is-new':'')+'"><span class="reward-emoji" aria-hidden="true">'+reward.emoji+'</span>'+reward.name+(fresh?' ✨':'')+'</span>';
+const LEVEL_NAMES=['Curioso','Explorador','Ingenioso','Brillante','Estrella','Maestro','Leyenda'];
+function levelInfo(xp=store.xp){
+  const safeXp=Math.max(0,Math.floor(Number(xp)||0)),level=Math.floor(safeXp/100)+1;
+  const current=safeXp%100;
+  return {level,current,total:safeXp,remaining:100-current,title:LEVEL_NAMES[Math.min(LEVEL_NAMES.length-1,Math.floor((level-1)/2))]};
+}
+function medalChip(reward,fresh=false,locked=false){
+  return '<span class="reward-chip'+(fresh?' is-new':'')+(locked?' is-locked':'')+'"><span class="reward-emoji" aria-hidden="true">'+(locked?'🔒':reward.emoji)+'</span>'+reward.name+(fresh?' ✨':'')+'</span>';
 }
 function renderMedals(newIds=[]){
   const known=MEDALS.filter(reward=>store.badges.includes(reward.id));
-  $('#reward-count').textContent=known.length+'/'+MEDALS.length+' conseguidas';
-  $('#reward-shelf-chips').innerHTML=known.length?known.map(reward=>medalChip(reward)).join(''):'<span class="reward-empty">🎁 Tu primera medalla está por llegar.</span>';
+  const locked=MEDALS.filter(reward=>!store.badges.includes(reward.id));
+  const level=levelInfo();
+  $('#reward-count').textContent=known.length+'/'+MEDALS.length+' medallas';
+  $('#reward-shelf-chips').innerHTML=known.length?known.map(reward=>medalChip(reward)).join(''):'<span class="reward-empty">🎁 ¡Tu primera medalla está cerca!</span>';
+  $('#reward-next-badges').innerHTML=locked.length?locked.slice(0,3).map(reward=>medalChip(reward,false,true)).join(''):'<span class="reward-empty">🏆 ¡Colección completa!</span>';
+  $('#reward-next-goal').textContent=locked.length?'🎯 Para conseguir «'+locked[0].name+'»: '+locked[0].goal+'.':'🎉 ¡Desbloqueaste todas las medallas!';
+  $('#reward-level-name').textContent='🌟 Nivel '+level.level+' · '+level.title;
+  $('#reward-total-xp').textContent=level.total.toLocaleString('es-AR')+' XP acumulados';
+  $('#reward-level-fill').style.width=level.current+'%';
+  $('#reward-level-track').setAttribute('aria-valuenow',String(level.current));
+  $('#reward-level-progress').textContent=level.current+'/100 XP';
+  $('#reward-level-next').textContent=level.remaining+' XP para el próximo nivel';
   $('#result-rewards-title').textContent=newIds.length?'🎊 ¡'+(newIds.length===1?'Nueva medalla!':'Nuevas medallas!'):'🏅 Tu colección';
   $('#result-rewards-note').textContent=newIds.length?'¡Las ganaste jugando! Quedan guardadas en este dispositivo.':'¡Seguí jugando y desbloqueá más!';
   $('#result-rewards-chips').innerHTML=known.length?known.map(reward=>medalChip(reward,newIds.includes(reward.id))).join(''):'<span class="reward-empty">¡Tu próximo reto trae premios!</span>';
+}
+function renderXp(earned,bonus,oldLevel){
+  const l=levelInfo();
+  $('#result-xp-gain').textContent='+'+(earned+bonus)+' XP';
+  $('#result-xp-bonus').textContent=bonus?'🎀 Incluye +10 XP por la primera partida de hoy.':'💚 El progreso cuenta sin necesidad de jugar todos los días.';
+  $('#result-xp-level').textContent='🌟 Nivel '+l.level+' · '+l.title;
+  $('#result-xp-fill').style.width=l.current+'%';
+  $('#result-xp-track').setAttribute('aria-valuenow',String(l.current));
+  $('#result-xp-progress').textContent=l.current+'/100 XP';
+  $('#result-xp-next').textContent=l.remaining+' XP para el próximo nivel';
+  const leveled=l.level>oldLevel;
+  $('#result-xp-levelup').textContent=leveled?'🎉 ¡Subiste al nivel '+l.level+'!':'';
+  $('#result-xp-levelup').className=leveled?'level-up':'';
+  return leveled;
 }
 function unlockMedals(){
   const fresh=[];
@@ -520,6 +588,14 @@ function finish(){
   if(game.daily)store.dailyBest[today]=Math.max(store.dailyBest[today]||0,game.score);
   if(game.mode==='mini'&&game.seed==='mini:'+today)store.miniBest[today]=Math.max(store.miniBest[today]||0,game.correct);
   for(const date in store.dailyBest){if((Date.now()-new Date(date+'T12:00:00').getTime())>40*86400000)delete store.dailyBest[date];}
+  const oldLevel=levelInfo().level;
+  const earnedXp=20+Math.min(10,game.correct)*5+(game.mode==='mini'&&game.correct===3?10:0);
+  const firstToday=!store.rewardDays.includes(today);
+  const bonusXp=firstToday?10:0;
+  store.xp+=earnedXp+bonusXp;
+  if(firstToday)store.rewardDays=[...store.rewardDays,today].slice(-120);
+  if(!store.playDays.includes(today))store.playDays=[...store.playDays,today].slice(-120);
+  if(!store.modesPlayed.includes(game.mode))store.modesPlayed=[...store.modesPlayed,game.mode];
   store.scores.unshift({points:game.score,mode:game.daily?'Diario':game.mode,date:today,name:String(store.name||'Jugador').slice(0,25),correct:game.correct});
   store.scores=store.scores.slice(0,50);
   const newMedals=unlockMedals();
@@ -538,9 +614,13 @@ function finish(){
   $('#result-stamps').hidden=game.mode!=='mini';
   if(game.mode==='mini')$('#result-stamps').textContent=game.outcomes.join(' ');
   renderMedals(newMedals);
+  const leveledUp=renderXp(earnedXp,bonusXp,oldLevel);
   show('result');
-  const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
+  if(game.mode!=='focus'){
+    const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
+  }
   if(game.mode==='mini'&&game.correct===3){confetti(true);tone(true,'record');}
+  else if(game.mode!=='focus'&&game.mode!=='mini'&&leveledUp){confetti(true);tone(true,'record');}
   else if(game.mode!=='focus'&&game.mode!=='mini'&&(isRecord&&game.score>0||newMedals.length)){confetti(true);tone(true,'record');}
 }
 function showScores(){
@@ -597,7 +677,7 @@ function resetMyData(){
   try{localStorage.removeItem('reto60-v1');}catch{}
   for(const key of Object.keys(store))delete store[key];
   Object.assign(store,structuredClone(defaults));
-  store.badges=[];store.miniBest={};
+  store.badges=[];store.miniBest={};store.xp=0;store.playDays=[];store.rewardDays=[];store.modesPlayed=[];
   closeOverlays();updateHome();toast('Datos locales eliminados');
 }
 function exportStats(){
