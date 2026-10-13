@@ -26,3 +26,21 @@
 .focus-result .reward-result-progress .reward-level-fill{transition:none}
 @media(max-width:480px){.reward-level-panel{padding:11px 12px}.reward-level-top strong{font-size:14px}.reward-result-progress{padding:14px}.reward-chip.is-locked{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.reward-level-fill{transition:none}}
+
+/* Objetivos opcionales, claros y sin obligación diaria */
+.reward-daily{margin:0 0 24px;padding:16px 18px;border-radius:20px;background:linear-gradient(115deg,#293e6b,#39416c);border:1px solid #b7daffa8}
+.reward-daily-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.reward-daily-head h2{margin:0;color:#fff;font-size:18px}.reward-daily-head small{color:#cde7ff;font-size:11px}
+.reward-task-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.reward-task{border:1px solid #b5bdd478;background:#141d3e88;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:5px;min-height:114px}
+.reward-task strong{font-size:13px;line-height:1.45;color:#fff}
+.reward-task small{color:#d3dcef;font-size:11px;line-height:1.5}
+.reward-task .task-xp{font-size:12px;font-weight:800;color:#ffe8a1;margin-top:auto}
+.reward-task.complete{border-color:#9ff5d3;background:#235d5799}
+.reward-task.complete .task-xp{color:#c1ffe0}
+.reward-daily-note{color:#c7d5e9;font-size:11px;margin:10px 0 0;line-height:1.55}
+.reward-progress-share{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;margin-top:12px;padding:9px 13px;border-radius:12px;background:#254970;border:1px solid #9cdaed;color:#fff;font-weight:800;font-size:12px;cursor:pointer}
+.reward-progress-share:focus-visible{outline:3px solid #ffe9ab;outline-offset:3px}
+.reward-award-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:9px 0 0}
+.reward-award-tags span{font-size:11px;color:#dbffee;background:#1d645d77;padding:6px 9px;border-radius:9px;border:1px solid #9de3ca6b}
+@media(max-width:720px){.reward-task-grid{grid-template-columns:1fr}.reward-task{min-height:0;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}.reward-task small{grid-column:1}.reward-task .task-xp{grid-column:2;grid-row:1/3;align-self:center}.reward-daily{padding:14px}}
