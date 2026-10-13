@@ -1,0 +1,36 @@
+
+/* RETO 60 · v1.6: desafíos irresistibles sin trampas ni presión */
+.hook-card{position:relative;overflow:hidden;margin:0 0 28px;padding:22px 23px;border:1.5px solid #ffe2a0a8;border-radius:24px;background:linear-gradient(117deg,#51388d,#273c83 58%,#14746d);box-shadow:0 15px 38px #150d365e}
+.hook-card:before{content:"✨";position:absolute;right:28px;top:16px;font-size:23px}
+.hook-title{margin:8px 0 9px;font-size:clamp(22px,3.4vw,31px);letter-spacing:-.035em;color:#fff;line-height:1.2}
+.hook-description{color:#f6eafa;font-size:13px;line-height:1.55;margin:0 0 15px}
+.hook-emoji-row{display:flex;justify-content:center;gap:11px;max-width:380px;margin:13px auto 18px}
+.hook-emoji-row span{font-size:clamp(31px,7vw,48px);display:grid;place-items:center;flex:1;aspect-ratio:1;max-width:83px;border-radius:19px;background:#fff2;border:1px solid #ffffff61;box-shadow:0 7px 15px #150c303b}
+.hook-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hook-actions button{min-height:49px}
+.hook-muted{font-size:12px;color:#d9f6eb}
+.mode.emoji-mode{background:linear-gradient(139deg,#a5456c,#533c9c 95%);border-color:#ffc1d9}
+.mode.mini-mode{background:linear-gradient(139deg,#257d85,#3a3881 95%);border-color:#93fff0}
+.mode.emoji-mode .m-icon,.mode.mini-mode .m-icon{filter:drop-shadow(0 4px 12px #ffffff40)}
+.mini-banner{margin:0 0 26px;padding:19px 21px;border:1.5px solid #82f0dca6;border-radius:20px;background:linear-gradient(110deg,#205b70,#38356c);display:flex;justify-content:space-between;gap:14px;align-items:center}
+.mini-banner h3{font-size:18px;margin:5px 0}.mini-banner p{font-size:12px;margin:0;color:#e5fff5}
+.mini-banner .small-btn{background:#d8fff0;border-color:#d8fff0;color:#1b3b48;white-space:nowrap}
+.mini-today{font-size:13px;color:#fce3b2;font-weight:800}
+#mini-hint[hidden]{display:none!important}
+#mini-hint{background:#214a68;border:1px solid #81e7e0;color:#eafff9;padding:15px 19px;margin:0 0 15px;border-radius:17px;line-height:1.6;font-size:14px}
+.mini-mode-active .timer-box{display:none!important}
+.mini-mode-active .game-progress{height:9px;background:#244a5c}
+.mini-mode-active .game-progress>div{background:linear-gradient(90deg,#ffe19d,#79f2d6)}
+.mini-mode-active .question-card{background:linear-gradient(120deg,#2a4e6c,#3a326b);border-color:#91f7d3}
+.mini-mode-active .answer{min-height:80px}
+.mini-mode-active .play-stats{display:none!important}
+.emoji-mode-active .answer .ans-text{font-size:clamp(31px,5.4vw,44px)}
+.emoji-mode-active .answer{justify-content:center;min-height:97px}
+.emoji-mode-active .question-card{background:linear-gradient(120deg,#5a2c7c,#2c4b77);border-color:#f6b9e2}
+.emoji-mode-active .question-card h2{font-size:25px}
+.result-stamps{font-size:30px;letter-spacing:.08em;line-height:1.4;margin:8px 0 0;text-align:center}
+.result-stamps[hidden]{display:none!important}
+.mini-mode-active .feedback{color:#dcfff4}
+@media(max-width:740px){.hook-card{padding:18px 16px}.mini-banner{align-items:stretch;flex-direction:column}.mini-banner .small-btn{width:100%}.hook-actions>*{flex:1}.hook-muted{flex-basis:100%;text-align:center}}
+@media(max-width:390px){.hook-emoji-row{gap:7px}.hook-emoji-row span{border-radius:14px}.hook-title{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.hook-emoji-row span{animation:none}}
