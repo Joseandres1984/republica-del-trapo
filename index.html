@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="./playful-v2.css">
 <link rel="stylesheet" href="./rewards-v13.css">
 <link rel="stylesheet" href="./focus-v14.css">
+<link rel="stylesheet" href="./sticky-v16.css">
 </head>
 <body>
 <div class="app-shell">
@@ -25,12 +26,16 @@
  </header>
  <main>
   <section id="screen-home" class="screen">
-   <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí tu juego favorito, sumá puntos y desafiá a tus amigos. ¡Es gratis, divertido y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 7 MODOS</div></div></div>
+   <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí entre juegos de 60 segundos, puzzles de emojis y tres mini-retos para compartir. ¡Gratis y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 9 MODOS</div></div></div>
    <div class="challenge" id="challenge-banner" hidden><div><div class="eyebrow">🔥 ¡TE DESAFIARON!</div><h3>¿Podés superar <strong id="challenge-goal">0</strong> puntos?</h3><p>Jugá 60 segundos con las mismas preguntas y compartí tu resultado.</p></div><button id="challenge-play" class="primary-btn">🎯 ¡Acepto!</button></div>
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
+<section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
+   <div class="mini-banner"><div><div class="eyebrow">💎 3 PREGUNTAS PARA HOY</div><h3>¿Lográs el 3 de 3?</h3><p>Emoji + trivia + patrón. Sin reloj, con resultado para compartir.</p><div id="mini-today" class="mini-today">Tu reto de hoy está listo</div></div><button type="button" id="mini-cta" class="small-btn">🚀 ¡Quiero probar!</button></div>
 <section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/7 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
    <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>Misión Foco: sin reloj</p></div>
    <div class="modes">
+    <button class="mode emoji-mode" data-mode="emoji"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">😍</span><strong>Emoji Pop</strong><small>¿Cuál es distinto? ¡Más fácil de entender, imposible!</small></button>
+    <button class="mode mini-mode" data-mode="mini"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">💎</span><strong>Reto 3</strong><small>Solo 3 preguntas. ¡Buscá el 3 de 3 de hoy!</small></button>
     <button class="mode featured" data-mode="mix"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🎲</span><strong>Modo mixto</strong><small>Un poquito de todo</small></button>
     <button class="mode" data-mode="quiz"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🧠</span><strong>Trivia</strong><small>Preguntas curiosas</small></button>
     <button class="mode" data-mode="math"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">🔢</span><strong>Cálculo</strong><small>¡Sacá cuentas!</small></button>
@@ -48,6 +53,7 @@
   <section id="screen-play" class="screen" hidden>
    <div class="game-layout"><div class="game-nav"><button id="back-btn" class="small-btn">← Salir</button><span id="current-mode" class="game-label">MODO MIXTO</span><span class="game-label">RETO 60</span></div>
     <div class="game-progress" role="progressbar" aria-label="Progreso de la partida"><div id="progress-value"></div></div>
+    <div id="mini-hint" hidden>💎 <strong>Reto 3:</strong> tres preguntas fáciles de entender. Sin reloj, sin registrarte. Al terminar, compartí tu resultado con tus amigos.</div>
     <div id="focus-hint" hidden><strong>🌿 Misión Foco · para personas con TDAH y quien quiera jugar sin apuro</strong>Sin reloj ni presión. Leé la consigna, elegí tu respuesta o pasá a la siguiente misión. Si te equivocás, podés intentar otra vez.</div>
     <div id="timer-ring" class="timer-box" style="--percent:100%"><div class="timer-core"><strong id="timer-value" aria-live="off">60</strong><small>SEGUNDOS</small></div></div>
     <div class="play-stats"><div class="play-stat"><small>⭐ PUNTOS</small><strong id="play-points">0</strong></div><div class="play-stat"><small>🔥 RACHA</small><strong id="play-streak">0</strong></div><div class="play-stat"><small>✅ RESPONDIDAS</small><strong id="play-answered">0</strong></div></div>
@@ -57,7 +63,7 @@
    </div>
   </section>
   <section id="screen-result" class="screen" hidden>
-   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><section id="result-rewards" class="result-rewards" aria-label="Medallas de la partida"><h3 id="result-rewards-title">🏅 Tus medallas</h3><p id="result-rewards-note">¡Seguí jugando para sumar premios!</p><div id="result-rewards-chips" class="reward-chips"></div></section><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
+   <div class="result"><div class="trophy" aria-hidden="true">🏆</div><div id="result-header" class="result-badge">PARTIDA COMPLETADA</div><h1 id="result-title">¡Gran partida!</h1><p id="result-sub" class="result-sub">¿Te animás a una revancha?</p><div id="result-stamps" class="result-stamps" aria-label="Resultado del Reto 3" hidden></div><div class="score-box"><div id="result-score" class="big">0</div><div class="pts">PUNTOS OBTENIDOS</div></div><div class="result-grid"><div class="result-cell"><strong id="result-correct">0</strong><small>Correctas</small></div><div class="result-cell"><strong id="result-combo">0</strong><small>Mejor racha</small></div><div class="result-cell"><strong id="result-accuracy">0%</strong><small>Precisión</small></div></div><section id="result-rewards" class="result-rewards" aria-label="Medallas de la partida"><h3 id="result-rewards-title">🏅 Tus medallas</h3><p id="result-rewards-note">¡Seguí jugando para sumar premios!</p><div id="result-rewards-chips" class="reward-chips"></div></section><div class="result-actions"><button id="play-again" class="primary-btn">🔁 Otra partida</button><button id="share-btn" class="secondary-btn">📣 Compartir</button><button id="result-home" class="secondary-btn">🏠 Inicio</button></div></div>
   </section>
  </main>
 </div>
@@ -194,13 +200,43 @@ function focus(rng,step,seedText){
   const [prompt,correct,distractors]=FOCUS_TASKS[index];
   return {kind:'focus',label:'MISIÓN FOCO · '+(step+1)+'/8',prompt,...uniqueOptions(correct,distractors,rng)};
 }
-const KINDS=['quiz','math','logic','odd','memory'];
+const EMOJI_PAIRS=[
+  ['🐱','🐶'],['🍎','🍌'],['⭐','🌙'],['🐸','🐙'],['🚗','🚀'],['⚽','🏀'],
+  ['🍕','🍔'],['🌼','🌵'],['🐼','🦊'],['🎈','🎁'],['🌞','🌧️'],['🎸','🥁'],
+  ['👑','🧢'],['🌻','🍄'],['🍓','🍉'],['🐳','🦀'],['🚲','🚜'],['🍪','🍩']
+];
+function emoji(rng,level=0){
+  const [a,b]=EMOJI_PAIRS[randInt(rng,0,EMOJI_PAIRS.length-1)];
+  const odd=randInt(rng,0,1)?a:b,other=odd===a?b:a;
+  const options=shuffled([other,other,odd,other],rng);
+  return {kind:'emoji',label:'EMOJI POP · ENCONTRÁ EL DISTINTO',prompt:'¿Cuál es diferente?',options,correctIndex:options.indexOf(odd)};
+}
+const MINI_QUESTIONS=[
+  ['¿Dónde vivimos?','🌍 Tierra',['🪐 Saturno','🌞 Sol','🌙 Luna']],
+  ['¿Qué usamos para escuchar música?','🎧 Auriculares',['🛏️ Cama','🪥 Cepillo','🧤 Guantes']],
+  ['¿Qué animal puede volar?','🦋 Mariposa',['🐢 Tortuga','🐘 Elefante','🐟 Pez']],
+  ['¿Qué se usa para escribir?','✏️ Lápiz',['🍉 Sandía','🧸 Peluche','🏀 Pelota']],
+  ['¿Qué fruta es amarilla?','🍌 Banana',['🍓 Frutilla','🍇 Uva','🥝 Kiwi']],
+  ['¿Qué usás cuando llueve?','☂️ Paraguas',['🕶️ Anteojos de sol','🧢 Gorra','🩴 Ojotas']]
+];
+function miniQuiz(rng){
+  const [prompt,correct,other]=MINI_QUESTIONS[randInt(rng,0,MINI_QUESTIONS.length-1)];
+  return {kind:'mini',label:'RETO 3 · PREGUNTA 2/3',prompt,...uniqueOptions(correct,other,rng)};
+}
+function miniPattern(rng){
+  const pairs=[['🌞','🌙'],['🍎','🍋'],['🟩','🟦'],['❤️','💙'],['🐱','🐶'],['⭐','🌸']];
+  const [a,b]=pairs[randInt(rng,0,pairs.length-1)];
+  const distractors=[b,'🍭','🎈','🐸','🪐'].filter(x=>x!==a).slice(0,3);
+  return {kind:'mini',label:'RETO 3 · PREGUNTA 3/3',prompt:'¿Qué sigue? '+a+' '+b+' '+a+' '+b+' …',...uniqueOptions(a,distractors,rng)};
+}
+const KINDS=['quiz','math','logic','odd','memory','emoji'];
 function createGame(mode, seedText, questionIndex, difficulty=0){
-  if(!['mix','focus',...KINDS].includes(mode))throw new Error('Invalid game mode');
+  if(!['mix','focus','mini',...KINDS].includes(mode))throw new Error('Invalid game mode');
   const rng=seeded(hash32(`${seedText}/${mode}/${questionIndex}`));
   if(mode==='focus')return focus(rng,questionIndex,seedText);
-  const kind=mode==='mix'?KINDS[randInt(rng,0,4)]:mode;
-  return ({quiz,math,logic,odd,memory})[kind](rng,difficulty);
+  if(mode==='mini')return questionIndex===0?emoji(rng):questionIndex===1?miniQuiz(rng):miniPattern(rng);
+  const kind=mode==='mix'?(questionIndex===0?'emoji':questionIndex===1?'odd':KINDS[randInt(rng,0,KINDS.length-1)]):mode;
+  return ({quiz,math,logic,odd,memory,emoji})[kind](rng,difficulty);
 }
 function todayLocal(d=new Date()){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -223,7 +259,8 @@ const visitDay=new Date().toLocaleDateString('en-CA');
 store.metrics.opens++;
 store.metrics.visits=[...new Set([...(store.metrics.visits||[]),visitDay])].slice(-90);
 const N=60;
-const validModes=['mix','quiz','math','logic','odd','memory','focus'];
+if(!store.miniBest||typeof store.miniBest!=='object')store.miniBest={};
+const validModes=['mix','quiz','math','logic','odd','memory','focus','emoji','mini'];
 function readChallenge(){
   try{
     const q=new URLSearchParams(location.search),seed=q.get('reto'),goal=Number(q.get('meta')),mode=q.get('modo')||'mix';
@@ -233,6 +270,7 @@ function readChallenge(){
 }
 const receivedChallenge=readChallenge();
 const focusInvite=!receivedChallenge&&new URLSearchParams(location.search).get("juego")==="focus";
+const miniInvite=!receivedChallenge&&new URLSearchParams(location.search).get('juego')==='mini';
 function shareUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const url=new URL(location.pathname,location.origin);
@@ -267,7 +305,8 @@ const MEDALS=[
   {id:'smart',emoji:'🧠',name:'8 aciertos',test:()=>game.correct>=8},
   {id:'daily',emoji:'☀️',name:'Reto diario',test:()=>game.daily},
   {id:'return',emoji:'💖',name:'3 días seguidos',test:()=>store.days>=3},
-  {id:'focus',emoji:'🌿',name:'Misión Foco',test:()=>game.mode==='focus'&&game.questionIndex>=8}
+  {id:'focus',emoji:'🌿',name:'Misión Foco',test:()=>game.mode==='focus'&&game.questionIndex>=8},
+  {id:'mini-perfect',emoji:'💎',name:'¡3 de 3!',test:()=>game.mode==='mini'&&game.correct===3}
 ];
 function medalChip(reward,fresh=false){
   return '<span class="reward-chip'+(fresh?' is-new':'')+'"><span class="reward-emoji" aria-hidden="true">'+reward.emoji+'</span>'+reward.name+(fresh?' ✨':'')+'</span>';
@@ -310,6 +349,8 @@ function updateHome(){
   $('#stat-best').textContent=Number(store.best||0).toLocaleString('es-AR');
   $('#stat-games').textContent=Number(store.games||0).toLocaleString('es-AR');
   $('#stat-days').textContent=Number(store.days||0);
+  const todayMini=store.miniBest[todayLocal()];
+  $('#mini-today').textContent=Number.isInteger(todayMini)?'Hoy: '+todayMini+'/3 aciertos. ¿Lo mejorás?':'🎁 Todavía no jugaste el desafío de hoy';
   const dailyDone=store.dailyBest[todayLocal()]!==undefined;
   $('#daily-status').textContent=dailyDone?`Hoy: ${store.dailyBest[todayLocal()].toLocaleString('es-AR')} puntos`:'Volvé mañana por otro desafío. ¡Siempre hay algo nuevo!';
   $('#daily-btn').textContent=dailyDone?'Mejorar marca ↗':'🎯 Jugar hoy';
@@ -319,21 +360,25 @@ function updateHome(){
 function clearGameTimers(){if(tickId!==null)clearInterval(tickId);if(actionId!==null)clearTimeout(actionId);if(revealId!==null)clearTimeout(revealId);tickId=actionId=revealId=null;}
 function begin(mode='mix',daily=false,challenge=null){
   clearGameTimers();
-  const day=todayLocal(), seed=challenge?.seed||(daily?'daily:'+day:'r'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,11));
-  game={mode,daily,seed,challengeGoal:challenge?.goal??null,startAt:performance.now(),endAt:mode==='focus'?Infinity:performance.now()+N*1000,questionIndex:0,score:0,correct:0,missed:0,streak:0,maxStreak:0,locked:false,ended:false,current:null};
+  const day=todayLocal(), seed=challenge?.seed||(mode==='mini'?'mini:'+day:daily?'daily:'+day:'r'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,11));
+  game={mode,daily,seed,challengeGoal:challenge?.goal??null,startAt:performance.now(),endAt:(mode==='focus'||mode==='mini')?Infinity:performance.now()+N*1000,questionIndex:0,outcomes:[],score:0,correct:0,missed:0,streak:0,maxStreak:0,locked:false,ended:false,current:null};
   $('#screen-play').classList.toggle('focus-mode-active',mode==='focus');
-  $('#timer-ring').hidden=mode==='focus';$('#focus-hint').hidden=mode!=='focus';
+  $('#screen-play').classList.toggle('mini-mode-active',mode==='mini');
+  $('#screen-play').classList.toggle('emoji-mode-active',mode==='emoji');
+  $('#mini-hint').hidden=mode!=='mini';
+  $('#result-stamps').hidden=true;
+  $('#timer-ring').hidden=mode==='focus'||mode==='mini';$('#focus-hint').hidden=mode!=='focus';
   $('#progress-value').style.width='100%';
   store.metrics.starts++;persist();
-  $('#current-mode').textContent=daily?'RETO DIARIO':({mix:'MODO MIXTO',quiz:'TRIVIA',math:'CÁLCULO',logic:'SECUENCIAS',odd:'DIFERENTE',memory:'MEMORIA',focus:'🌿 MISIÓN FOCO'}[mode]);
+  $('#current-mode').textContent=daily?'RETO DIARIO':({mix:'MODO MIXTO',quiz:'TRIVIA',math:'CÁLCULO',logic:'SECUENCIAS',odd:'DIFERENTE',memory:'MEMORIA',focus:'🌿 MISIÓN FOCO',emoji:'😍 EMOJI POP',mini:'💎 RETO 3'}[mode]);
   $('#play-points').textContent='0';$('#play-streak').textContent='0';$('#play-answered').textContent='0';
   $('#game-feedback').hidden=true;
-  $('#skip-btn').textContent=mode==='focus'?'Pasar esta misión →':'Saltar pregunta →';
-  show('play');if(mode!=='focus')tone(true,'start');nextQuestion();
-  if(mode!=='focus'){tickId=setInterval(updateClock,70);updateClock();}
+  $('#skip-btn').textContent=mode==='focus'?'Pasar esta misión →':mode==='mini'?'Pasar →':'Saltar pregunta →';
+  show('play');if(mode!=='focus'&&mode!=='mini')tone(true,'start');nextQuestion();
+  if(mode!=='focus'&&mode!=='mini'){tickId=setInterval(updateClock,70);updateClock();}
 }
 function updateClock(){
-  if(!game||game.ended||game.mode==='focus')return;
+  if(!game||game.ended||game.mode==='focus'||game.mode==='mini')return;
   const remain=Math.max(0,(game.endAt-performance.now())/1000);
   $('#timer-value').textContent=String(Math.ceil(remain));
   $('#timer-ring').style.setProperty('--percent',(remain/N*100)+'%');
@@ -343,9 +388,10 @@ function updateClock(){
 }
 function nextQuestion(){
   if(!game||game.ended)return;
-  if(game.mode==='focus'){
-    if(game.questionIndex>=8){finish();return;}
-    $('#progress-value').style.width=(game.questionIndex/8*100)+'%';
+  if(game.mode==='focus'||game.mode==='mini'){
+    const steps=game.mode==='focus'?8:3;
+    if(game.questionIndex>=steps){finish();return;}
+    $('#progress-value').style.width=(game.questionIndex/steps*100)+'%';
   }else if(performance.now()>=game.endAt){finish();return;}
   game.locked=false;
   const question=createGame(game.mode,game.seed,game.questionIndex,Math.floor(game.questionIndex/5));
@@ -406,6 +452,7 @@ function answer(index){
     actionId=setTimeout(nextQuestion,780);
     return;
   }
+  if(game.mode==='mini')game.outcomes.push(yes?'🟩':'🟥');
   game.locked=true;
   $$('#answers button').forEach((btn,i)=>{btn.disabled=true;btn.classList.toggle('correct',i===q.correctIndex);btn.classList.toggle('wrong',i===index&&!yes);});
   if(yes){game.correct++;game.streak++;game.maxStreak=Math.max(game.maxStreak,game.streak);game.score+=scoreFor(true,game.streak-1);}
@@ -419,16 +466,16 @@ function answer(index){
   game.questionIndex++;
   actionId=setTimeout(nextQuestion,yes?390:640);
 }
-function skip(){if(!game||game.ended||game.locked)return;game.locked=true;game.missed++;game.streak=0;game.questionIndex++;$('#play-streak').textContent='0';$('#play-answered').textContent=String(game.correct+game.missed);actionId=setTimeout(nextQuestion,game.mode==='focus'?280:180);}
+function skip(){if(!game||game.ended||game.locked)return;if(game.mode==='mini')game.outcomes.push('⬜');game.locked=true;game.missed++;game.streak=0;game.questionIndex++;$('#play-streak').textContent='0';$('#play-answered').textContent=String(game.correct+game.missed);actionId=setTimeout(nextQuestion,game.mode==='focus'?280:game.mode==='mini'?320:180);}
 function finish(){
   if(!game||game.ended)return;
   game.ended=true;clearGameTimers();
-  if(game.mode!=='focus')$('#timer-value').textContent='0';
+  if(game.mode!=='focus'&&game.mode!=='mini')$('#timer-value').textContent='0';
   $('#screen-result').classList.toggle('focus-result',game.mode==='focus');
   store.metrics.completed++;
   store.games=Math.max(0,Number(store.games||0))+1;
   store.totalCorrect=Math.max(0,Number(store.totalCorrect||0))+game.correct;
-  const isRecord=game.mode!=='focus'&&game.score>Number(store.best||0);
+  const isRecord=game.mode!=='focus'&&game.mode!=='mini'&&game.score>Number(store.best||0);
   if(isRecord)store.best=game.score;
   const today=todayLocal();
   if(store.lastPlayed!==today){
@@ -436,26 +483,30 @@ function finish(){
     store.days=store.lastPlayed===todayLocal(prev)?store.days+1:1;store.lastPlayed=today;
   }
   if(game.daily)store.dailyBest[today]=Math.max(store.dailyBest[today]||0,game.score);
+  if(game.mode==='mini')store.miniBest[today]=Math.max(store.miniBest[today]||0,game.correct);
   for(const date in store.dailyBest){if((Date.now()-new Date(date+'T12:00:00').getTime())>40*86400000)delete store.dailyBest[date];}
   store.scores.unshift({points:game.score,mode:game.daily?'Diario':game.mode,date:today,name:String(store.name||'Jugador').slice(0,25),correct:game.correct});
   store.scores=store.scores.slice(0,50);
   const newMedals=unlockMedals();
   persist();
-  $('#result-header').textContent=game.mode==='focus'?'🌿 ¡MISIÓN COMPLETADA!':isRecord&&game.score>0?'🏆 NUEVO RÉCORD':'🎉 ¡PARTIDA COMPLETADA!';
-  $('#result-title').textContent=game.mode==='focus'?'¡Muy bien, a tu ritmo!':isRecord&&game.score>0?'¡Increíble marca!':game.score>0?'¡Gran partida!':'¡Volvé a intentarlo!';
+  $('#result-header').textContent=game.mode==='focus'?'🌿 ¡MISIÓN COMPLETADA!':game.mode==='mini'?'💎 ¡RETO 3 TERMINADO!':isRecord&&game.score>0?'🏆 NUEVO RÉCORD':'🎉 ¡PARTIDA COMPLETADA!';
+  $('#result-title').textContent=game.mode==='focus'?'¡Muy bien, a tu ritmo!':game.mode==='mini'?(game.correct===3?'¡3 de 3! ¡Perfecto!':'¡Completaste los 3!') :isRecord&&game.score>0?'¡Increíble marca!':game.score>0?'¡Gran partida!':'¡Volvé a intentarlo!';
   $('#result-score').textContent=game.score.toLocaleString('es-AR');
   $('#result-correct').textContent=String(game.correct);
   $('#result-combo').textContent=String(game.maxStreak);
   $('#result-accuracy').textContent=(game.correct+game.missed?Math.round(game.correct/(game.correct+game.missed)*100):0)+'%';
-  $('#result-sub').textContent=game.mode==='focus'?'Completaste 8 pasos a tu ritmo. No hay apuro ni resultados buenos o malos. ¡Gracias por jugar!':game.daily?'Completaste el reto de hoy. ¿Podés superar esta puntuación?':'Un minuto, muchas decisiones. ¿Te animás a una revancha?';
-  if(game.challengeGoal!==null&&game.mode!=='focus'){
+  $('#result-sub').textContent=game.mode==='focus'?'Completaste 8 pasos a tu ritmo. No hay apuro ni resultados buenos o malos. ¡Gracias por jugar!':game.mode==='mini'?'¡Mostrale a un amigo tus tres casilleros sin revelar las preguntas!':game.daily?'Completaste el reto de hoy. ¿Podés superar esta puntuación?':'Un minuto, muchas decisiones. ¿Te animás a una revancha?';
+  if(game.challengeGoal!==null&&game.mode!=='focus'&&game.mode!=='mini'){
     const won=game.score>game.challengeGoal;
     $('#result-sub').textContent=won?`¡Superaste la marca de ${game.challengeGoal.toLocaleString('es-AR')} puntos! Compartí tu revancha.`:`La marca a superar era ${game.challengeGoal.toLocaleString('es-AR')} puntos. ¡Probá de nuevo!`;
   }
+  $('#result-stamps').hidden=game.mode!=='mini';
+  if(game.mode==='mini')$('#result-stamps').textContent=game.outcomes.join(' ');
   renderMedals(newMedals);
   show('result');
   const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
-  if(game.mode!=='focus'&&(isRecord&&game.score>0||newMedals.length)){confetti(true);tone(true,'record');}
+  if(game.mode==='mini'&&game.correct===3){confetti(true);tone(true,'record');}
+  else if(game.mode!=='focus'&&game.mode!=='mini'&&(isRecord&&game.score>0||newMedals.length)){confetti(true);tone(true,'record');}
 }
 function showScores(){
   const list=$('#leader-list'), scores=[...(store.scores||[])].sort((a,b)=>b.points-a.points).slice(0,10);
@@ -466,9 +517,10 @@ function closeOverlays(){$$('.overlay').forEach(el=>el.hidden=true);}
 function exitGame(){clearGameTimers();if(game)game.ended=true;game=null;updateHome();show('home');}
 function shareText(){
   const link=shareUrl();
+  if(game?.mode==='mini')return `💎 RETO 3 · RETO 60\n${game.outcomes.join(' ')}\nHice ${game.correct}/3 hoy. ¿Vos cuántas hacés?\n${link||'RETO 60: Reto 3'}`;
   if(game?.mode==='focus')return `🌿 MISIÓN FOCO · RETO 60 🌿\nCompleté ${game.correct} pasos de 8, sin reloj y a mi ritmo. ¿Querés probar?\n${link||'RETO 60: Misión Foco'}`;
-  if(!game?.ended)return `⚡ RETO 60 ⚡\n¿Te animás a jugar trivia, lógica, memoria y más?\nJugá gratis: ${link||'RETO 60: 7 modos para elegir.'}`;
-  return `⚡ RETO 60 ⚡\nHice ${game.score.toLocaleString('es-AR')} puntos en 60 segundos.\n¿Podés superar mi marca?\n${link||'RETO 60: 7 modos para elegir.'}`;
+  if(!game?.ended)return `⚡ RETO 60 ⚡\n¿Te animás a Emoji Pop o Reto 3? Se entienden en segundos.\nJugá gratis: ${link||'RETO 60: 9 modos para elegir.'}`;
+  return `⚡ RETO 60 ⚡\nHice ${game.score.toLocaleString('es-AR')} puntos en 60 segundos.\n¿Podés superar mi marca?\n${link||'RETO 60: 9 modos para elegir.'}`;
 }
 async function share(messageOverride){
   const data={title:'RETO 60',text:typeof messageOverride==="string"?messageOverride:shareText()};
@@ -517,7 +569,10 @@ function exportStats(){
   a.href=url;a.download='reto60-mis-estadisticas.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 $('#hero-play').addEventListener('click',()=>begin('mix'));
-$('#challenge-play').addEventListener('click',()=>receivedChallenge?begin(receivedChallenge.mode,false,receivedChallenge):begin('focus'));
+$('#try-emoji').addEventListener('click',()=>begin('emoji'));
+$('#mini-cta').addEventListener('click',()=>begin('mini'));
+
+$('#challenge-play').addEventListener('click',()=>receivedChallenge?begin(receivedChallenge.mode,false,receivedChallenge):miniInvite?begin('mini'):begin('focus'));
 $('#share-home').addEventListener('click',share);
 $('#share-focus').addEventListener('click',()=>{
   const url=new URL(location.pathname,location.origin);
@@ -555,7 +610,12 @@ $$('.overlay').forEach(overlay=>overlay.addEventListener('click',ev=>{if(ev.targ
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 updateHome();
 if(receivedChallenge){
-  if(receivedChallenge.mode==='focus'){
+  if(receivedChallenge.mode==='mini'){
+    $('#challenge-banner').querySelector('.eyebrow').textContent='💎 RETO 3 DE HOY';
+    $('#challenge-banner').querySelector('h3').textContent='¿Hacés 3 de 3?';
+    $('#challenge-banner').querySelector('p').textContent='Jugá las mismas tres preguntas y compartí tus tres casilleros.';
+    $('#challenge-play').textContent='💎 ¡Voy a probar!';
+  }else if(receivedChallenge.mode==='focus'){
     $('#challenge-banner').querySelector('.eyebrow').textContent='🌿 INVITACIÓN A MISIÓN FOCO';
     $('#challenge-banner').querySelector('h3').textContent='🌿 ¿Te animás a jugar Misión Foco?';
     $('#challenge-banner').querySelector('p').textContent='Ocho pasos sin reloj, a tu ritmo. Podés repetir o pasar cualquier misión.';
@@ -563,6 +623,12 @@ if(receivedChallenge){
   }else{
     $('#challenge-goal').textContent=receivedChallenge.goal.toLocaleString('es-AR');
   }
+  $('#challenge-banner').hidden=false;
+}else if(miniInvite){
+  $('#challenge-banner').querySelector('.eyebrow').textContent='💎 TRES PREGUNTAS';
+  $('#challenge-banner').querySelector('h3').textContent='¿Hacés 3 de 3 hoy?';
+  $('#challenge-banner').querySelector('p').textContent='Sin reloj. Tres preguntas rápidas y un resultado para compartir.';
+  $('#challenge-play').textContent='💎 Jugar Reto 3';
   $('#challenge-banner').hidden=false;
 }else if(focusInvite){
   $('#challenge-banner').querySelector('.eyebrow').textContent='🌿 JUEGO SIN RELOJ';
