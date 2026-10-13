@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="./rewards-v13.css">
 <link rel="stylesheet" href="./focus-v14.css">
 <link rel="stylesheet" href="./sticky-v16.css">
+<link rel="stylesheet" href="./music-v17.css">
 </head>
 <body>
 <div class="app-shell">
@@ -27,6 +28,7 @@
  <main>
   <section id="screen-home" class="screen">
    <div class="hero"><div class="hero-copy"><div class="eyebrow">🎉 UN MINUTO PARA DIVERTIRTE</div><h1>60 segundos.<br><em>¡Pura diversión!</em></h1><p>Elegí entre juegos de 60 segundos, puzzles de emojis y tres mini-retos para compartir. ¡Gratis y sin registrarte! 🥳</p><div class="hero-actions"><button id="hero-play" class="primary-btn">🚀 ¡A jugar! <span aria-hidden="true">→</span></button><button id="leader-open-2" class="secondary-btn">🏆 Mis récords</button><button id="share-home" class="secondary-btn">💌 Invitar amigos</button></div></div><div class="hero-art" aria-hidden="true"><div class="ring"><div class="ring-inner"><div class="ring-num">60</div><div class="ring-sub">SEGUNDOS</div></div></div><div class="spark one">🌟 +100 PTS</div><div class="spark two">🎮 9 MODOS</div></div></div>
+   <div class="music-home-row"><button type="button" id="music-home-btn" class="secondary-btn music-toggle" aria-pressed="false">🎵 Música: apagada</button><span class="music-explain">Melodía alegre y suave. Solo suena mientras jugás. Vos decidís.</span></div>
    <div class="challenge" id="challenge-banner" hidden><div><div class="eyebrow">🔥 ¡TE DESAFIARON!</div><h3>¿Podés superar <strong id="challenge-goal">0</strong> puntos?</h3><p>Jugá 60 segundos con las mismas preguntas y compartí tu resultado.</p></div><button id="challenge-play" class="primary-btn">🎯 ¡Acepto!</button></div>
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
 <section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
@@ -51,7 +53,7 @@
    <footer class="footer"><span>RETO 60 · Versión de prueba · Todos los resultados se guardan en este dispositivo.</span><span><a href="./privacidad.html">Privacidad</a> · <a href="./terminos.html">Condiciones</a></span><span>Sin anuncios. Sin cuentas. Sin conexión obligatoria después de instalar.</span></footer>
   </section>
   <section id="screen-play" class="screen" hidden>
-   <div class="game-layout"><div class="game-nav"><button id="back-btn" class="small-btn">← Salir</button><span id="current-mode" class="game-label">MODO MIXTO</span><span class="game-label">RETO 60</span></div>
+   <div class="game-layout"><div class="game-nav"><button id="back-btn" class="small-btn">← Salir</button><span id="current-mode" class="game-label">MODO MIXTO</span><button type="button" id="music-play-btn" class="small-btn music-toggle" aria-pressed="false">🎵 Música</button></div>
     <div class="game-progress" role="progressbar" aria-label="Progreso de la partida"><div id="progress-value"></div></div>
     <div id="mini-hint" hidden>💎 <strong>Reto 3:</strong> tres preguntas fáciles de entender. Sin reloj, sin registrarte. Al terminar, compartí tu resultado con tus amigos.</div>
     <div id="focus-hint" hidden><strong>🌿 Misión Foco · para personas con TDAH y quien quiera jugar sin apuro</strong>Sin reloj ni presión. Leé la consigna, elegí tu respuesta o pasá a la siguiente misión. Si te equivocás, podés intentar otra vez.</div>
@@ -70,9 +72,10 @@
 <div id="leader-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="leader-heading"><div class="dialog-head"><div><div class="eyebrow">TU HISTORIAL</div><h2 id="leader-heading">Récords locales</h2></div><button id="leader-close" aria-label="Cerrar récords">✕</button></div><p>Las mejores partidas de este dispositivo. Los rankings globales llegarán en una versión futura.</p><div id="leader-list" class="leader-list"></div><button class="secondary-btn" onclick="document.getElementById('leader-close').click()">Cerrar</button></div></div>
 <div id="install-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="install-heading"><div class="dialog-head"><h2 id="install-heading">Instalar RETO 60</h2><button id="install-close" aria-label="Cerrar">✕</button></div><p id="install-detail">Abrí RETO 60 desde un sitio seguro HTTPS para instalarla.</p><button class="secondary-btn" onclick="document.getElementById('install-close').click()">Entendido</button></div></div><div id="metrics-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="metrics-heading"><div class="dialog-head"><div><div class="eyebrow">SOLO EN TU DISPOSITIVO</div><h2 id="metrics-heading">Mis estadísticas</h2></div><button id="metrics-close" aria-label="Cerrar estadísticas">✕</button></div><p>Medimos tu actividad solo en este navegador. No enviamos datos a ningún servidor.</p><div class="metrics-grid">
   <div><strong id="metric-opens">0</strong><small>Visitas</small></div><div><strong id="metric-starts">0</strong><small>Partidas iniciadas</small></div><div><strong id="metric-finished">0</strong><small>Terminadas</small></div><div><strong id="metric-rate">0%</strong><small>Finalización</small></div><div><strong id="metric-shares">0</strong><small>Veces compartido</small></div><div><strong id="metric-active">0</strong><small>Días activos</small></div><div><strong id="metric-right">0</strong><small>Aciertos</small></div><div><strong id="metric-average">0</strong><small>Promedio (hasta 50 últimas)</small></div>
-  </div><button id="metrics-export" class="secondary-btn">Exportar mis estadísticas ↗</button></div></div><div id="settings-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="settings-heading"><div class="dialog-head"><div><div class="eyebrow">AJUSTES</div><h2 id="settings-heading">Tu perfil</h2></div><button id="settings-close" aria-label="Cerrar perfil">✕</button></div><p>Elegí el nombre que aparecerá en tus récords. Se guarda solamente en este dispositivo.</p><label class="input-label" for="settings-name">Nombre del jugador</label><input id="settings-name" class="name-input" maxlength="25" autocomplete="nickname" value="Jugador"><div class="result-actions" style="justify-content:flex-start"><button id="sound-btn" class="secondary-btn">♫ Sonido</button><button id="settings-save" class="primary-btn">Guardar</button><button id="settings-clear" class="secondary-btn">Borrar mis datos</button></div></div></div>
+  </div><button id="metrics-export" class="secondary-btn">Exportar mis estadísticas ↗</button></div></div><div id="settings-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="settings-heading"><div class="dialog-head"><div><div class="eyebrow">AJUSTES</div><h2 id="settings-heading">Tu perfil</h2></div><button id="settings-close" aria-label="Cerrar perfil">✕</button></div><p>Elegí el nombre que aparecerá en tus récords. Se guarda solamente en este dispositivo.</p><label class="input-label" for="settings-name">Nombre del jugador</label><input id="settings-name" class="name-input" maxlength="25" autocomplete="nickname" value="Jugador"><div class="result-actions" style="justify-content:flex-start"><button id="sound-btn" class="secondary-btn">♫ Sonido</button><button type="button" id="music-settings-btn" class="secondary-btn music-toggle" aria-pressed="false">🎵 Música: apagada</button><button id="settings-save" class="primary-btn">Guardar</button><button id="settings-clear" class="secondary-btn">Borrar mis datos</button></div><p class="music-settings-note">La música es opcional, de volumen bajo y se detiene al terminar o salir de una partida. Misión Foco siempre se juega en silencio. Los efectos de sonido se controlan por separado.</p></div></div>
 <div id="exit-modal" class="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="exit-heading"><h2 id="exit-heading">¿Abandonar la partida?</h2><p>Se perderán los puntos de esta partida. Tu récord anterior sigue guardado.</p><div class="result-actions" style="justify-content:flex-start"><button id="exit-no" class="secondary-btn">Seguir jugando</button><button id="exit-yes" class="primary-btn">Salir</button></div></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="./music-v17.js"></script>
 <script>/* RETO 60 — motor de preguntas. Sin dependencias ni llamadas externas. */
 const QUESTIONS = [
   ['¿Cuál es el planeta rojo?', ['Marte','Venus','Saturno','Mercurio']],
@@ -249,7 +252,7 @@ function scoreFor(correct, streak){ return correct ? 100+Math.min(10,streak)*15 
 'use strict';
 const $=(s)=>document.querySelector(s);
 const $$=(s)=>Array.from(document.querySelectorAll(s));
-const defaults={games:0,best:0,totalCorrect:0,lastPlayed:'',days:0,scores:[],sound:true,name:'Jugador',dailyBest:{},metrics:{opens:0,starts:0,completed:0,shared:0,visits:[]}};
+const defaults={games:0,best:0,totalCorrect:0,lastPlayed:'',days:0,scores:[],sound:true,music:false,name:'Jugador',dailyBest:{},metrics:{opens:0,starts:0,completed:0,shared:0,visits:[]}};
 const store=(()=>{try{const raw=JSON.parse(localStorage.getItem('reto60-v1')||'null');return raw&&typeof raw==='object'?{...defaults,...raw}:structuredClone(defaults);}catch{return structuredClone(defaults);}})();
 if(!Array.isArray(store.badges))store.badges=[];
 function persist(){try{localStorage.setItem('reto60-v1',JSON.stringify(store));}catch{/*modo privado*/}}
@@ -341,8 +344,39 @@ function confetti(big=false){
   document.body.appendChild(layer);setTimeout(()=>layer.remove(),2200);
 }
 
+function stopMusic(){window.RETO_MUSIC?.stop();}
+function musicEnabledInGame(){return !!store.music&&!!game&&!game.ended&&game.mode!=='focus'&&!document.hidden;}
+function musicLabels(){
+  const focusActive=!!game&&game.mode==='focus'&&!$('#screen-play').hidden;
+  const on=!!store.music;
+  const labels=[
+    ['#music-home-btn',on?'🎵 Música: activa':'🎵 Música: apagada'],
+    ['#music-settings-btn',on?'🎵 Música: activa':'🎵 Música: apagada'],
+    ['#music-play-btn',focusActive?'🌿 Sin música':on?'🎵 Música ON':'🎵 Música OFF']
+  ];
+  for(const [selector,label] of labels){
+    const b=$(selector);if(!b)continue;
+    b.textContent=label;
+    b.classList.toggle('is-on',on&&!focusActive);
+    b.setAttribute('aria-pressed',String(on&&!focusActive));
+    b.disabled=selector==='#music-play-btn'&&focusActive;
+  }
+}
+function syncMusic(){
+  if(musicEnabledInGame()){
+    const started=window.RETO_MUSIC?.start();
+    if(started===false)toast('Este navegador no puede reproducir música.');
+  }else stopMusic();
+  musicLabels();
+}
+function toggleMusic(){
+  if(game?.mode==='focus'&&!$('#screen-play').hidden){toast('🌿 Misión Foco se juega sin música.');return;}
+  store.music=!store.music;persist();syncMusic();
+  toast(store.music?'🎵 Música activada: empieza al jugar y se pausa al salir.':'🔇 Música desactivada.');
+}
+
 function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function show(name){$$('.screen').forEach(el=>el.hidden=el.id!==`screen-${name}`);window.scrollTo({top:0,behavior:'instant'});}
+function show(name){$$('.screen').forEach(el=>el.hidden=el.id!==`screen-${name}`);window.scrollTo({top:0,behavior:'instant'});syncMusic();}
 function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastId);toastId=setTimeout(()=>el.hidden=true,2600);}
 function updateHome(){
   renderMedals();
@@ -356,6 +390,7 @@ function updateHome(){
   $('#daily-btn').textContent=dailyDone?'Mejorar marca ↗':'🎯 Jugar hoy';
   $('#settings-name').value=store.name||'Jugador';
   $('#sound-btn').textContent=store.sound?'🔊 Sonido':'🔇 Silencio';
+  musicLabels();
 }
 function clearGameTimers(){if(tickId!==null)clearInterval(tickId);if(actionId!==null)clearTimeout(actionId);if(revealId!==null)clearTimeout(revealId);tickId=actionId=revealId=null;}
 function begin(mode='mix',daily=false,challenge=null){
@@ -604,6 +639,9 @@ $('#settings-open').addEventListener('click',()=>{$('#settings-modal').hidden=fa
 $('#settings-close').addEventListener('click',closeOverlays);
 $('#settings-save').addEventListener('click',()=>{store.name=($('#settings-name').value.trim()||'Jugador').slice(0,25);persist();closeOverlays();toast('Perfil guardado');});
 $('#sound-btn').addEventListener('click',()=>{store.sound=!store.sound;persist();updateHome();});
+['#music-home-btn','#music-play-btn','#music-settings-btn'].forEach(id=>$(id).addEventListener('click',toggleMusic));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMusic();else if(!$('#screen-play').hidden)syncMusic();});
+window.addEventListener('pagehide',stopMusic);
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(!$('#exit-modal').hidden)return closeOverlays();if(!$('#settings-modal').hidden||!$('#leader-modal').hidden||!$('#metrics-modal').hidden||!$('#install-modal').hidden)return closeOverlays();if(!$('#screen-play').hidden){$('#exit-modal').hidden=false;}return;}
   if(!$('#screen-play').hidden&&$$('.overlay').every(el=>el.hidden)&&['1','2','3','4'].includes(e.key)){answer(Number(e.key)-1);}
