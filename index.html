@@ -47,7 +47,7 @@
  <div class="reward-preview-title">✨ Próximos objetivos</div>
  <div id="reward-next-badges" class="reward-chips"></div>
  <div id="reward-next-goal" class="reward-up-next">Completá una partida para ganar tu primera medalla.</div>
- <p class="reward-note">🎀 Bonus de +10 XP por tu primera partida completada del día. No perdés XP ni medallas si descansás.</p>
+ <p class="reward-note">🎀 Podés conseguir XP extra con tres objetivos diarios opcionales. No perdés XP ni medallas si descansás.</p>
 </section>
 <section class="reward-daily" aria-label="Objetivos opcionales de hoy">
 <div class="reward-daily-head"><h2>🎁 Tres objetivos de hoy</h2><small>Sin apuro, todos opcionales</small></div>
@@ -352,7 +352,7 @@ const DAILY_GOALS=[
 ];
 function dailyGoalProgress(date=todayLocal()){
  const p=store.dailyProgress?.[date];
- return p&&typeof p==='object'?{games:Math.max(0,Number(p.games)||0),correct:Math.max(0,Number(p.correct)||0),mini:!!p.mini,claimed:Array.isArray(p.claimed)?p.claimed:[]}:{games:0,correct:0,mini:false,claimed:[]};
+ return p&&typeof p==='object'?{games:Math.max(0,Number(p.games)||0),correct:Math.max(0,Number(p.correct)||0),mini:!!p.mini,claimed:Array.isArray(p.claimed)?[...p.claimed]:[]}:{games:0,correct:0,mini:false,claimed:[]};
 }
 function rewardDailyGoals(){
  const date=todayLocal(),p=dailyGoalProgress(date),claims=[];let bonus=0;
