@@ -1,0 +1,28 @@
+/* RETO 60 v1.8 — recompensas claras, inclusivas y persistentes */
+.reward-shelf{background:linear-gradient(135deg,#573589 0%,#343e80 54%,#166b6d 100%)}
+.reward-level-panel{background:#141d43a6;border:1px solid #f5d8ff72;border-radius:18px;margin:13px 0 12px;padding:13px 14px}
+.reward-level-top{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap}
+.reward-level-top strong{font-size:15px;color:#fff}
+.reward-level-top small{font-size:12px;color:#ffe0ac}
+.reward-level-track{height:13px;width:100%;overflow:hidden;border-radius:40px;margin:10px 0 8px;background:#0f1b37;box-shadow:inset 0 2px 5px #0711278c}
+.reward-level-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#69ebc4,#a5c3ff 55%,#ffc7d9);transition:width .35s ease}
+.reward-level-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:#eeeffc}
+.reward-up-next{margin:10px 0 4px;padding:11px 12px;border-radius:12px;background:#f6e7ff1c;color:#fff;font-size:12px;line-height:1.5;border:1px dashed #e0caee80}
+.reward-preview-title{margin:12px 0 5px;font-weight:700;color:#f8e0b6;font-size:12px}
+.reward-chip.is-locked{opacity:.67;background:#171b3d80;border-style:dashed}
+.reward-chip.is-locked .reward-emoji{filter:grayscale(.7)}
+.reward-note{margin-top:11px;font-size:11px;color:#f4e3ff;line-height:1.6}
+.reward-result-progress{border:1px solid #a8d8fb9e;background:linear-gradient(115deg,#233e6e,#314366 58%,#4a346f);border-radius:19px;padding:17px 18px;margin:15px 0;overflow:hidden}
+.reward-result-progress h3{font-size:17px;margin:0 0 5px;color:#fff}
+.reward-result-progress p{font-size:12px;line-height:1.6;color:#e2ecff;margin:3px 0}
+.reward-result-progress .xp-gain{font-size:26px;font-weight:950;letter-spacing:-.05em;background:linear-gradient(90deg,#ffeaa1,#a9ffcc);color:transparent;background-clip:text}
+.reward-result-progress .reward-level-track{margin:11px 0 7px}
+.reward-result-progress .reward-level-bottom{color:#eef9ff}
+.reward-result-progress .level-up{font-weight:800;color:#baffd0}
+.reward-result-progress[hidden]{display:none!important}
+.reward-shelf .reward-chips{gap:8px}
+.reward-shelf .reward-chip{white-space:normal}
+.focus-result .reward-result-progress{background:#214651;border-color:#96c9bc;box-shadow:none}
+.focus-result .reward-result-progress .reward-level-fill{transition:none}
+@media(max-width:480px){.reward-level-panel{padding:11px 12px}.reward-level-top strong{font-size:14px}.reward-result-progress{padding:14px}.reward-chip.is-locked{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.reward-level-fill{transition:none}}
