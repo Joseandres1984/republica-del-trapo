@@ -280,13 +280,20 @@ const store=(()=>{try{const raw=JSON.parse(localStorage.getItem('reto60-v1')||'n
 if(!Array.isArray(store.badges))store.badges=[];
 const pastScores=Array.isArray(store.scores)?store.scores:[];
 const pastDates=[...new Set(pastScores.map(p=>p.date).concat(store.lastPlayed||'').filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)))].slice(-100);
-if(!Number.isFinite(store.xp)||store.xp<0){
-  // Conservar una parte del progreso histórico sin alterar puntos ni récords existentes.
+// Migración única del historial v1: el valor 0 de XP del esquema nuevo no debe ocultar partidas previas.
+const needsRewardMigration=store.rewardsV2!==true;
+if(!Array.isArray(store.playDays))store.playDays=[];
+if(!Array.isArray(store.rewardDays))store.rewardDays=[];
+if(!Array.isArray(store.modesPlayed))store.modesPlayed=[];
+if(!Number.isFinite(store.xp)||store.xp<0||(needsRewardMigration&&store.games>0&&pastScores.length>0&&store.xp===0)){
   store.xp=pastScores.reduce((sum,p)=>sum+20+Math.min(50,Math.max(0,Number(p.correct)||0)*5),0);
 }
-if(!Array.isArray(store.playDays))store.playDays=[...pastDates];
-if(!Array.isArray(store.rewardDays))store.rewardDays=[...pastDates];
-if(!Array.isArray(store.modesPlayed))store.modesPlayed=[...new Set(pastScores.map(p=>p.mode==='Diario'?'mix':p.mode).filter(p=>typeof p==='string'&&p.length<30))];
+if(needsRewardMigration){
+  if(!store.playDays.length)store.playDays=[...pastDates];
+  if(!store.rewardDays.length)store.rewardDays=[...pastDates];
+  if(!store.modesPlayed.length)store.modesPlayed=[...new Set(pastScores.map(p=>p.mode==='Diario'?'mix':p.mode).filter(p=>typeof p==='string'&&p.length<30))];
+}
+store.rewardsV2=true;
 function persist(){try{localStorage.setItem('reto60-v1',JSON.stringify(store));}catch{/*modo privado*/}}
 // Los datos de uso se guardan solo en este dispositivo y nunca se transmiten.
 store.metrics={opens:0,starts:0,completed:0,shared:0,visits:[],...(store.metrics||{})};
