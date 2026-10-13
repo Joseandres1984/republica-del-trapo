@@ -49,6 +49,11 @@
  <div id="reward-next-goal" class="reward-up-next">Completá una partida para ganar tu primera medalla.</div>
  <p class="reward-note">🎀 Bonus de +10 XP por tu primera partida completada del día. No perdés XP ni medallas si descansás.</p>
 </section>
+<section class="reward-daily" aria-label="Objetivos opcionales de hoy">
+<div class="reward-daily-head"><h2>🎁 Tres objetivos de hoy</h2><small>Sin apuro, todos opcionales</small></div>
+<div id="reward-task-grid" class="reward-task-grid"></div>
+<p class="reward-daily-note">La XP es simbólica, no dinero ni premios comprables. Si descansás, conservás tus medallas y niveles.</p>
+</section>
    <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>Misión Foco: sin reloj</p></div>
    <div class="modes">
     <button class="mode emoji-mode" data-mode="emoji"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">😍</span><strong>Emoji Pop</strong><small>¿Cuál es distinto? ¡Más fácil de entender, imposible!</small></button>
@@ -302,6 +307,7 @@ store.metrics.opens++;
 store.metrics.visits=[...new Set([...(store.metrics.visits||[]),visitDay])].slice(-90);
 const N=60;
 if(!store.miniBest||typeof store.miniBest!=='object')store.miniBest={};
+if(!store.dailyProgress||typeof store.dailyProgress!=='object'||Array.isArray(store.dailyProgress))store.dailyProgress={};
 const validModes=['mix','quiz','math','logic','odd','memory','focus','emoji','mini'];
 function readChallenge(){
   try{
@@ -339,6 +345,34 @@ function tone(good=true,flavor='answer'){
     }
   }catch{/* navegador sin audio o con sonido bloqueado */}
 }
+const DAILY_GOALS=[
+ {id:'play',emoji:'🎮',name:'Terminá una partida',xp:10,progress:p=>Math.min(1,p.games)+'/1',complete:p=>p.games>=1},
+ {id:'correct',emoji:'🌟',name:'Acertá 5 preguntas',xp:20,progress:p=>Math.min(5,p.correct)+'/5',complete:p=>p.correct>=5},
+ {id:'mini',emoji:'💎',name:'Jugá Reto 3',xp:15,progress:p=>p.mini?'Hecho':'Pendiente',complete:p=>p.mini}
+];
+function dailyGoalProgress(date=todayLocal()){
+ const p=store.dailyProgress?.[date];
+ return p&&typeof p==='object'?{games:Math.max(0,Number(p.games)||0),correct:Math.max(0,Number(p.correct)||0),mini:!!p.mini,claimed:Array.isArray(p.claimed)?p.claimed:[]}:{games:0,correct:0,mini:false,claimed:[]};
+}
+function rewardDailyGoals(){
+ const date=todayLocal(),p=dailyGoalProgress(date),claims=[];let bonus=0;
+ p.games++;p.correct+=game.correct;if(game.mode==='mini')p.mini=true;
+ for(const goal of DAILY_GOALS){
+   if(goal.complete(p)&&!p.claimed.includes(goal.id)){p.claimed.push(goal.id);bonus+=goal.xp;claims.push(goal.emoji+' '+goal.name+' (+'+goal.xp+' XP)');}
+ }
+ store.dailyProgress[date]=p;
+ const dates=Object.keys(store.dailyProgress).sort();
+ for(const d of dates.slice(0,-21))delete store.dailyProgress[d];
+ return {bonus,claims};
+}
+function renderDailyGoals(){
+ const p=dailyGoalProgress();
+ $('#reward-task-grid').innerHTML=DAILY_GOALS.map(g=>{
+  const done=p.claimed.includes(g.id);
+  return '<div class="reward-task'+(done?' complete':'')+'"><strong>'+g.emoji+' '+g.name+'</strong><small>'+g.progress(p)+'</small><span class="task-xp">'+(done?'✓ ¡Ganado!':'+'+g.xp+' XP')+'</span></div>';
+ }).join('');
+}
+
 const MEDALS=[
   {id:'first',emoji:'🎮',name:'¡Primer reto!',goal:'Terminá una partida',test:()=>store.games>=1},
   {id:'mini-two',emoji:'🟦',name:'Dos de tres',goal:'Acertá 2 preguntas en Reto 3',test:()=>game.mode==='mini'&&game.correct>=2},
