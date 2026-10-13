@@ -417,10 +417,10 @@ function renderMedals(newIds=[]){
   $('#result-rewards-note').textContent=newIds.length?'¡Las ganaste jugando! Quedan guardadas en este dispositivo.':'¡Seguí jugando y desbloqueá más!';
   $('#result-rewards-chips').innerHTML=known.length?known.map(reward=>medalChip(reward,newIds.includes(reward.id))).join(''):'<span class="reward-empty">¡Tu próximo reto trae premios!</span>';
 }
-function renderXp(earned,bonus,oldLevel){
+function renderXp(earned,bonus,oldLevel,bonusReasons=[]){
   const l=levelInfo();
   $('#result-xp-gain').textContent='+'+(earned+bonus)+' XP';
-  $('#result-xp-bonus').textContent=bonus?'🎀 Incluye +10 XP por la primera partida de hoy.':'💚 El progreso cuenta sin necesidad de jugar todos los días.';
+  $('#result-xp-bonus').textContent=bonusReasons.length?'🎁 Objetivos de hoy: '+bonusReasons.join(' · '):'💚 El progreso cuenta sin necesidad de jugar todos los días.';
   $('#result-xp-level').textContent='🌟 Nivel '+l.level+' · '+l.title;
   $('#result-xp-fill').style.width=l.current+'%';
   $('#result-xp-track').setAttribute('aria-valuenow',String(l.current));
@@ -488,7 +488,7 @@ function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 function show(name){$$('.screen').forEach(el=>el.hidden=el.id!==`screen-${name}`);window.scrollTo({top:0,behavior:'instant'});syncMusic();}
 function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastId);toastId=setTimeout(()=>el.hidden=true,2600);}
 function updateHome(){
-  renderMedals();
+  renderMedals();renderDailyGoals();
   $('#stat-best').textContent=Number(store.best||0).toLocaleString('es-AR');
   $('#stat-games').textContent=Number(store.games||0).toLocaleString('es-AR');
   $('#stat-days').textContent=Number(store.days||0);
@@ -631,10 +631,10 @@ function finish(){
   for(const date in store.dailyBest){if((Date.now()-new Date(date+'T12:00:00').getTime())>40*86400000)delete store.dailyBest[date];}
   const oldLevel=levelInfo().level;
   const earnedXp=20+Math.min(10,game.correct)*5+(game.mode==='mini'&&game.correct===3?10:0);
-  const firstToday=!store.rewardDays.includes(today);
-  const bonusXp=firstToday?10:0;
+  const dailyReward=rewardDailyGoals();
+  const bonusXp=dailyReward.bonus;
   store.xp+=earnedXp+bonusXp;
-  if(firstToday)store.rewardDays=[...store.rewardDays,today].slice(-120);
+  if(!store.rewardDays.includes(today))store.rewardDays=[...store.rewardDays,today].slice(-120);
   if(!store.playDays.includes(today))store.playDays=[...store.playDays,today].slice(-120);
   if(!store.modesPlayed.includes(game.mode))store.modesPlayed=[...store.modesPlayed,game.mode];
   store.scores.unshift({points:game.score,mode:game.daily?'Diario':game.mode,date:today,name:String(store.name||'Jugador').slice(0,25),correct:game.correct});
@@ -655,7 +655,7 @@ function finish(){
   $('#result-stamps').hidden=game.mode!=='mini';
   if(game.mode==='mini')$('#result-stamps').textContent=game.outcomes.join(' ');
   renderMedals(newMedals);
-  const leveledUp=renderXp(earnedXp,bonusXp,oldLevel);
+  const leveledUp=renderXp(earnedXp,bonusXp,oldLevel,dailyReward.claims);
   show('result');
   if(game.mode!=='focus'){
     const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
@@ -718,7 +718,7 @@ function resetMyData(){
   try{localStorage.removeItem('reto60-v1');}catch{}
   for(const key of Object.keys(store))delete store[key];
   Object.assign(store,structuredClone(defaults));
-  store.badges=[];store.miniBest={};store.xp=0;store.playDays=[];store.rewardDays=[];store.modesPlayed=[];
+  store.badges=[];store.miniBest={};store.xp=0;store.playDays=[];store.rewardDays=[];store.modesPlayed=[];store.dailyProgress={};
   closeOverlays();updateHome();toast('Datos locales eliminados');
 }
 function exportStats(){
