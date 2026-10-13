@@ -31,7 +31,7 @@
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
 <section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
    <div class="mini-banner"><div><div class="eyebrow">💎 3 PREGUNTAS PARA HOY</div><h3>¿Lográs el 3 de 3?</h3><p>Emoji + trivia + patrón. Sin reloj, con resultado para compartir.</p><div id="mini-today" class="mini-today">Tu reto de hoy está listo</div></div><button type="button" id="mini-cta" class="small-btn">🚀 ¡Quiero probar!</button></div>
-<section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/7 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
+<section id="reward-shelf" class="reward-shelf" aria-label="Tus medallas"><div class="reward-head"><strong>🏅 Tu colección de medallas</strong><small id="reward-count">0/9 conseguidas</small></div><p class="reward-help">¡Cada partida cuenta! Desbloqueá premios por jugar, acertar y mejorar tus récords.</p><div id="reward-shelf-chips" class="reward-chips"><span class="reward-empty">🎁 Tu primera medalla está por llegar.</span></div></section>
    <div class="section-head"><h2>🌈 Elegí tu juego</h2><p>Misión Foco: sin reloj</p></div>
    <div class="modes">
     <button class="mode emoji-mode" data-mode="emoji"><span class="arrow">↗</span><span class="m-icon" aria-hidden="true">😍</span><strong>Emoji Pop</strong><small>¿Cuál es distinto? ¡Más fácil de entender, imposible!</small></button>
@@ -483,7 +483,7 @@ function finish(){
     store.days=store.lastPlayed===todayLocal(prev)?store.days+1:1;store.lastPlayed=today;
   }
   if(game.daily)store.dailyBest[today]=Math.max(store.dailyBest[today]||0,game.score);
-  if(game.mode==='mini')store.miniBest[today]=Math.max(store.miniBest[today]||0,game.correct);
+  if(game.mode==='mini'&&game.seed==='mini:'+today)store.miniBest[today]=Math.max(store.miniBest[today]||0,game.correct);
   for(const date in store.dailyBest){if((Date.now()-new Date(date+'T12:00:00').getTime())>40*86400000)delete store.dailyBest[date];}
   store.scores.unshift({points:game.score,mode:game.daily?'Diario':game.mode,date:today,name:String(store.name||'Jugador').slice(0,25),correct:game.correct});
   store.scores=store.scores.slice(0,50);
@@ -560,7 +560,9 @@ async function installApp(){
 function resetMyData(){
   if(!window.confirm('¿Borrar de este dispositivo los récords, partidas, estadísticas y preferencias de RETO 60?'))return;
   try{localStorage.removeItem('reto60-v1');}catch{}
+  for(const key of Object.keys(store))delete store[key];
   Object.assign(store,structuredClone(defaults));
+  store.badges=[];store.miniBest={};
   closeOverlays();updateHome();toast('Datos locales eliminados');
 }
 function exportStats(){
