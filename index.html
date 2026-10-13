@@ -655,6 +655,7 @@ function finish(){
   $('#result-stamps').hidden=game.mode!=='mini';
   if(game.mode==='mini')$('#result-stamps').textContent=game.outcomes.join(' ');
   renderMedals(newMedals);
+  renderDailyGoals();
   const leveledUp=renderXp(earnedXp,bonusXp,oldLevel,dailyReward.claims);
   show('result');
   if(game.mode!=='focus'){
