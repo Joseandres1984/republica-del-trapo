@@ -1,0 +1,15 @@
+/* RETO 60 v1.7 — música suave opcional */
+.music-home-row{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.music-home-row .music-toggle{min-height:44px;padding:10px 15px;background:#294457;border:1px solid #8ce6cc;color:#eafff8;box-shadow:0 7px 15px #091b2535}
+.music-home-row .music-toggle.is-on{background:linear-gradient(115deg,#396b5d,#2c4e79);color:#fff;border-color:#befed5}
+.music-home-row .music-explain{font-size:12px;color:#ddd6ec;line-height:1.4}
+.music-toggle{border-radius:13px;white-space:nowrap;cursor:pointer;transition:background .18s,border-color .18s}
+.music-toggle[disabled]{cursor:default;opacity:.77}
+.music-toggle:focus-visible{outline:3px solid #ffdf8c;outline-offset:3px}
+.game-nav .music-toggle{min-height:40px;padding:7px 9px;font-size:12px;background:#233f57;border:1px solid #8ac7d1;color:#fff}
+.game-nav .music-toggle.is-on{background:#2c695a;border-color:#b9fbd9}
+#music-settings-btn{min-width:132px}
+.music-settings-note{font-size:12px;color:#e4d4f8;margin:5px 0 10px;line-height:1.55}
+@media(max-width:440px){.music-home-row{gap:8px}.music-home-row .music-toggle{flex:0 0 auto}.music-home-row .music-explain{font-size:11px}.game-nav .music-toggle{padding:8px 6px;min-height:40px;font-size:11px}}
+@media(max-width:360px){.game-nav .music-toggle{font-size:10px;padding:7px 5px}.music-home-row .music-toggle{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.music-toggle{transition:none}}
