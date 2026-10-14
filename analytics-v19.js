@@ -74,7 +74,7 @@ function visit(){
  const qs=new URLSearchParams(location.search);
  capture('reto60_visit',{entry:qs.has('reto')?'challenge':qs.get('juego')==='focus'?'focus':qs.get('juego')==='mini'?'mini':'home'});
 }
-function accept(){save('yes');updateUI();boot();visit()}
+function accept(){save('yes');updateUI();boot();try{window.posthog?.opt_in_capturing?.()}catch{}visit()}
 function reject(){save('no');buffer=[];updateUI();try{window.posthog?.opt_out_capturing?.();window.posthog?.reset?.()}catch{}}
 function toggle(){if(enabled())reject();else accept()}
 function mount(){
