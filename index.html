@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="./music-v17.css">
 <link rel="stylesheet" href="./rewards-v18.css">
 <link rel="stylesheet" href="./analytics-v19.css">
+<link rel="stylesheet" href="./share-card-v20.css">
 </head>
 <body>
 <div class="app-shell">
@@ -670,6 +671,7 @@ function finish(){
   const leveledUp=renderXp(earnedXp,bonusXp,oldLevel,dailyReward.claims);
   if(leveledUp)window.RETO_ANALYTICS?.capture('reto60_level_up',{mode:game.mode,level:levelInfo().level});
   show('result');
+  document.dispatchEvent(new CustomEvent('reto60:finished',{detail:{mode:game.mode,score:game.score,correct:game.correct,questions:game.correct+game.missed,url:shareUrl()}}));
   if(game.mode!=='focus'){
     const scoreElement=$('#result-score');scoreElement.classList.remove('score-bounce');void scoreElement.offsetWidth;scoreElement.classList.add('score-bounce');
   }
@@ -828,5 +830,6 @@ if(receivedChallenge){
 persist();show('home');
 })();
 </script>
+<script src="./share-card-v20.js"></script>
 </body>
 </html>
