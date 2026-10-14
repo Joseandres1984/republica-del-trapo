@@ -37,7 +37,7 @@
    </section>
    <div class="challenge" id="challenge-banner" hidden><div><div class="eyebrow">🔥 ¡TE DESAFIARON!</div><h3>¿Podés superar <strong id="challenge-goal">0</strong> puntos?</h3><p>Jugá 60 segundos con las mismas preguntas y compartí tu resultado.</p></div><button id="challenge-play" class="primary-btn">🎯 ¡Acepto!</button></div>
    <div class="stats-strip"><div class="stat"><div class="s-label">🏆 TU MEJOR MARCA</div><strong id="stat-best">0</strong></div><div class="stat"><div class="s-label">🎮 PARTIDAS</div><strong id="stat-games">0</strong></div><div class="stat"><div class="s-label">🔥 DÍAS SEGUIDOS</div><strong id="stat-days">0</strong> <small class="muted">días</small></div></div>
-<section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
+<section class="hook-card" aria-label="Probá Emoji Pop"><div class="eyebrow">👀 PARECE FÁCIL… ¿NO?</div><h2 class="hook-title">¿Cuál es el diferente?</h2><div class="hook-emoji-row" aria-hidden="true"><span>🐱</span><span>🐱</span><span>🐶</span><span>🐱</span></div><p class="hook-description">Si lo encontraste al instante, ¡tenés que probar Emoji Pop! Una respuesta, puntos y ganas de otra.</p><div class="hook-actions"><button type="button" id="try-emoji" class="primary-btn">🐶 ¡Lo encontré! Jugar</button><button type="button" id="share-emoji" class="secondary-btn">📤 Desafiar a un amigo</button><span class="hook-muted">Sin registros · Un toque para empezar</span></div></section>
    <div class="mini-banner"><div><div class="eyebrow">💎 3 PREGUNTAS PARA HOY</div><h3>¿Lográs el 3 de 3?</h3><p>Emoji + trivia + patrón. Sin reloj, con resultado para compartir.</p><div id="mini-today" class="mini-today">Tu reto de hoy está listo</div></div><button type="button" id="mini-cta" class="small-btn">🚀 ¡Quiero probar!</button></div>
 <section id="reward-shelf" class="reward-shelf" aria-label="Recompensas y niveles">
  <div class="reward-head"><strong>🎁 Tus recompensas</strong><small id="reward-count">0 medallas</small></div>
@@ -326,6 +326,7 @@ function readChallenge(){
 const receivedChallenge=readChallenge();
 const focusInvite=!receivedChallenge&&new URLSearchParams(location.search).get("juego")==="focus";
 const miniInvite=!receivedChallenge&&new URLSearchParams(location.search).get('juego')==='mini';
+const emojiInvite=!receivedChallenge&&new URLSearchParams(location.search).get('juego')==='emoji';
 function shareUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const url=new URL(location.pathname,location.origin);
@@ -743,8 +744,15 @@ $('#hero-play').addEventListener('click',()=>begin('mix'));
 $('#try-emoji').addEventListener('click',()=>begin('emoji'));
 $('#mini-cta').addEventListener('click',()=>begin('mini'));
 
-$('#challenge-play').addEventListener('click',()=>receivedChallenge?begin(receivedChallenge.mode,false,receivedChallenge):miniInvite?begin('mini'):begin('focus'));
+$('#challenge-play').addEventListener('click',()=>receivedChallenge?begin(receivedChallenge.mode,false,receivedChallenge):miniInvite?begin('mini'):emojiInvite?begin('emoji'):begin('focus'));
 $('#share-home').addEventListener('click',share);
+$('#share-emoji').addEventListener('click',()=>{
+  const url=new URL(location.pathname,location.origin);
+  url.searchParams.set('juego','emoji');
+  url.searchParams.set('utm_source','referral');
+  url.searchParams.set('utm_campaign','emoji');
+  share('🐶 ¿Encontrás el emoji distinto entre cuatro? Parece fácil, pero probá hacerlo 60 segundos seguidos. Te desafío en Emoji Pop de RETO 60. Gratis y sin instalar nada:\n'+url.toString());
+});
 $('#share-focus').addEventListener('click',()=>{
   const url=new URL(location.pathname,location.origin);
   url.searchParams.set('juego','focus');
@@ -797,6 +805,12 @@ if(receivedChallenge){
   }else{
     $('#challenge-goal').textContent=receivedChallenge.goal.toLocaleString('es-AR');
   }
+  $('#challenge-banner').hidden=false;
+}else if(emojiInvite){
+  $('#challenge-banner').querySelector('.eyebrow').textContent='😍 ENCONTRÁ EL DIFERENTE';
+  $('#challenge-banner').querySelector('h3').textContent='🐱 🐱 🐶 🐱 · ¿Lo viste?';
+  $('#challenge-banner').querySelector('p').textContent='Ahora encontrá los diferentes durante 60 segundos. ¡Parece fácil!';
+  $('#challenge-play').textContent='😍 Jugar Emoji Pop';
   $('#challenge-banner').hidden=false;
 }else if(miniInvite){
   $('#challenge-banner').querySelector('.eyebrow').textContent='💎 TRES PREGUNTAS';
