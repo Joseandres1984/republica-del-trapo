@@ -12,7 +12,12 @@ function payload(attrs){
  const p={app:'reto60',version:'1.9'};
  if(!attrs||typeof attrs!=='object')return p;
  if(MODES.has(attrs.mode))p.mode=attrs.mode;
- if(['home','focus','mini','challenge'].includes(attrs.entry))p.entry=attrs.entry;
+ if(['home','focus','mini','emoji','challenge'].includes(attrs.entry))p.entry=attrs.entry;
+ const params=new URLSearchParams(location.search);
+ const origin=params.get('utm_source');
+ const campaign=params.get('utm_campaign');
+ if(['instagram','tiktok','youtube','whatsapp','facebook','reddit','creator','referral','other'].includes(origin))p.source=origin;
+ if(['lanzamiento','emoji','reto3','foco'].includes(campaign))p.campaign=campaign;
  for(const k of ['correct','score','questions','xp','badges','level']){
   if(attrs[k]===undefined)continue;
   const v=Number(attrs[k]);
@@ -72,7 +77,7 @@ function capture(event,props){
 }
 function visit(){
  const qs=new URLSearchParams(location.search);
- capture('reto60_visit',{entry:qs.has('reto')?'challenge':qs.get('juego')==='focus'?'focus':qs.get('juego')==='mini'?'mini':'home'});
+ capture('reto60_visit',{entry:qs.has('reto')?'challenge':qs.get('juego')==='focus'?'focus':qs.get('juego')==='mini'?'mini':qs.get('juego')==='emoji'?'emoji':'home'});
 }
 function accept(){save('yes');updateUI();boot();try{window.posthog?.opt_in_capturing?.()}catch{}visit()}
 function reject(){save('no');buffer=[];updateUI();try{window.posthog?.opt_out_capturing?.();window.posthog?.reset?.()}catch{}}
