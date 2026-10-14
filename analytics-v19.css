@@ -1,0 +1,14 @@
+/* RETO 60 — consentimiento de estadísticas, sin bloquear partidas */
+.analytics-consent{margin:14px 0 24px;padding:16px 18px;background:linear-gradient(115deg,#254b5b,#313f6d);border:1px solid #9ddac7;border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.analytics-consent[hidden]{display:none!important}
+.analytics-consent h3{margin:0 0 5px;font-size:16px;color:#fff}
+.analytics-consent p{margin:0;font-size:12px;line-height:1.55;color:#edf7ff}
+.analytics-consent a{color:#bbffe1;text-decoration:underline}
+.analytics-actions{display:flex;gap:8px;flex-wrap:wrap}
+.analytics-actions button{min-height:43px;white-space:nowrap}
+.analytics-actions .analytics-yes{background:#a9f1cb;color:#15393b;border:1px solid #d2ffdf;font-weight:800}
+.analytics-actions .analytics-no{background:#2d425d;color:#fff;border:1px solid #bdd8ec}
+.analytics-settings{border-top:1px solid #8eb5c377;padding-top:14px;margin-top:16px;font-size:12px;line-height:1.5;color:#e0eaf1}
+.analytics-settings button{min-height:44px;border:1px solid #b7dfd3;background:#2c4c64;color:#fff;border-radius:12px;padding:10px 14px;margin-top:9px}
+.analytics-settings a{color:#bbffe1}
+@media(max-width:740px){.analytics-consent{align-items:stretch;flex-direction:column;padding:15px}.analytics-actions button{flex:1}}
