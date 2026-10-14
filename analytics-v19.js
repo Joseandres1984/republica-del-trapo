@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const KEY='phc_CYeWw9wfxVjid4vrY92dVYYQLin7QiuGBn3qDJebtNbW',HOST='https://us.i.posthog.com',PREF='reto60-analitica-v1';
-const EVENTS=new Set(['reto60_visit','reto60_game_started','reto60_game_completed','reto60_game_abandoned','reto60_share_completed','reto60_reward_unlocked','reto60_level_up']);
+const EVENTS=new Set(['reto60_visit','reto60_game_started','reto60_game_completed','reto60_game_abandoned','reto60_share_completed','reto60_reward_unlocked','reto60_level_up','reto60_share_card_created','reto60_share_card_shared','reto60_share_card_downloaded','reto60_share_card_link_copied']);
 const MODES=new Set(['mix','quiz','math','logic','odd','memory','focus','emoji','mini','home']);
 let started=false,buffer=[];
 function choice(){try{return localStorage.getItem(PREF)}catch{return null}}
